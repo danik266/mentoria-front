@@ -8,13 +8,13 @@ export default function Courses() {
   const lessons = useMemo(() => getLessons(), [])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white">Курсы</h1>
-        <p className="text-slate-600 dark:text-slate-300 mt-2">Асинхронные курсы — учись в удобное время</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">Курсы</h1>
+        <p className="text-slate-600 dark:text-slate-300 mt-1.5 sm:mt-2">Асинхронные курсы — учись в удобное время</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {courses.map((course) => {
           const total = (lessons[course.id] || []).length || course.lessonsCount || 0
           const done = completedCount(course.id)

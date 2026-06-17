@@ -112,7 +112,7 @@ export default function Lesson() {
       <div className="grid lg:grid-cols-[260px_1fr] gap-6">
 
         {/* Sidebar */}
-        <aside className="h-fit lg:sticky lg:top-20 space-y-4">
+        <aside className="h-fit lg:sticky lg:top-20 space-y-4 order-2 lg:order-1">
           {/* Back */}
           <Link
             to={`/app/courses/${id}`}
@@ -197,7 +197,7 @@ export default function Lesson() {
         </aside>
 
         {/* Main content */}
-        <article className="min-w-0">
+        <article className="min-w-0 order-1 lg:order-2">
           {/* Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between mb-3">
