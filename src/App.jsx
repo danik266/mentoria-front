@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import Navbar from './components/Navbar'
@@ -24,6 +25,14 @@ function ProtectedRoute({ children }) {
   return children
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   const location = useLocation()
   const { user } = useAuth()
@@ -37,6 +46,7 @@ export default function App() {
 
   return (
     <div className={`${!isAppRoute ? 'min-h-screen flex flex-col' : ''}`}>
+      <ScrollToTop />
       {!bare && <Navbar />}
       <main className={`${!bare ? 'flex-1 pt-16' : ''}`}>
         <Routes>

@@ -1,253 +1,334 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
-import { getCourses, isLessonComplete, completeLesson, getLessons } from '../utils/storage'
+import ActivityRead from '../components/ActivityRead'
+import ActivityFlashcards from '../components/ActivityFlashcards'
+import ActivityMatch from '../components/ActivityMatch'
+import ActivityQuiz from '../components/ActivityQuiz'
+import ActivityVideo from '../components/ActivityVideo'
+import { getCourses, isLessonComplete, completeLesson, getLessons, startCourse } from '../utils/storage'
+
+const ACTIVITY_META = {
+  read:       { icon: 'menu_book',  label: 'Теория',       color: 'indigo' },
+  flashcards: { icon: 'style',      label: 'Флэшкарты',    color: 'purple' },
+  match:      { icon: 'link',       label: 'Совпадение',   color: 'amber'  },
+  quiz:       { icon: 'quiz',       label: 'Тест',         color: 'rose'   },
+  video:      { icon: 'play_circle',label: 'Видео',        color: 'blue'   },
+}
 
 export default function Lesson() {
   const { id, lessonId } = useParams()
   const navigate = useNavigate()
 
   const course = useMemo(() => getCourses().find((c) => c.id === id), [id])
-  const lessons = useMemo(() => getLessons(), [])
-  const courseLessons = lessons[id] || []
+  const lessonsMap = useMemo(() => getLessons(), [])
+  const courseLessons = lessonsMap[id] || []
   const lessonIndex = courseLessons.findIndex((l) => l.id === lessonId)
   const lesson = courseLessons[lessonIndex]
 
   const isLast = lessonIndex === courseLessons.length - 1
   const nextLesson = courseLessons[lessonIndex + 1]
+  const alreadyPassed = isLessonComplete(id, lessonId)
 
-  // состояние теста
-  const [answers, setAnswers] = useState({})
-  const [checked, setChecked] = useState(false)
-  const [passed, setPassed] = useState(isLessonComplete(id, lessonId))
+  // Step through activities
+  const activities = useMemo(() => {
+    if (!lesson) return []
+    if (lesson.activities && lesson.activities.length > 0) return lesson.activities
+    const acts = []
+    if (lesson.video_url) {
+      acts.push({ type: 'video', title: 'Видеоурок', url: lesson.video_url })
+    }
+    if (lesson.content && lesson.content.length > 0) {
+      acts.push({ type: 'read', title: 'Теория', content: lesson.content })
+    }
+    if (lesson.quiz && lesson.quiz.length > 0) {
+      acts.push({ type: 'quiz', title: 'Мини-тест', questions: lesson.quiz })
+    }
+    return acts
+  }, [lesson])
 
-  // сброс при смене урока
+  const [step, setStep] = useState(0)
+  const [completedSteps, setCompletedSteps] = useState(() =>
+    alreadyPassed ? new Set(activities.map((_, i) => i)) : new Set()
+  )
+
   useEffect(() => {
-    setAnswers({})
-    setChecked(false)
-    setPassed(isLessonComplete(id, lessonId))
+    setStep(0)
+    setCompletedSteps(
+      isLessonComplete(id, lessonId)
+        ? new Set(activities.map((_, i) => i))
+        : new Set()
+    )
     window.scrollTo(0, 0)
-  }, [id, lessonId])
+  }, [id, lessonId, activities])
 
   if (!course || !lesson) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
-        <p className="text-slate-500 mb-4">Урок не найден</p>
-        <Link to={`/courses/${id}`} className="text-primary font-semibold hover:underline">
-          ← К курсу
+        <p className="text-slate-500 mb-4">Урок не найден или недоступен</p>
+        <Link to={`/app/courses/${id}`} className="text-indigo-600 font-semibold hover:underline">
+          ← Вернуться к курсу
         </Link>
       </div>
     )
   }
 
-  const score = lesson.quiz.reduce(
-    (acc, q, i) => acc + (answers[i] === q.correct ? 1 : 0),
-    0
-  )
-  const allCorrect = score === lesson.quiz.length
+  const handleStepComplete = () => {
+    const newCompleted = new Set([...completedSteps, step])
+    setCompletedSteps(newCompleted)
 
-  const handleCheck = () => {
-    setChecked(true)
-    if (score === lesson.quiz.length) {
+    if (newCompleted.size === activities.length) {
+      startCourse(id)
       completeLesson(id, lessonId)
-      setPassed(true)
+    }
+
+    if (step < activities.length - 1) {
+      setTimeout(() => {
+        setStep(step + 1)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 400)
     }
   }
 
   const goNext = () => {
-    if (nextLesson) navigate(`/courses/${id}/lesson/${nextLesson.id}`)
+    if (nextLesson) navigate(`/app/courses/${id}/lesson/${nextLesson.id}`)
+    else navigate(`/certificate/${id}`)
+  }
+
+  const passed = completedSteps.size === activities.length && activities.length > 0
+  const currentActivity = activities[step]
+
+  const colorMap = {
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-200',
+    purple: 'bg-purple-50 text-purple-600 border-purple-200',
+    amber:  'bg-amber-50 text-amber-600 border-amber-200',
+    rose:   'bg-rose-50 text-rose-600 border-rose-200',
+    blue:   'bg-blue-50 text-blue-600 border-blue-200',
   }
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid lg:grid-cols-[260px_1fr] gap-6">
-        {/* Боковая навигация */}
-        <aside className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 h-fit lg:sticky lg:top-20">
+
+        {/* Sidebar */}
+        <aside className="h-fit lg:sticky lg:top-20 space-y-4">
+          {/* Back */}
           <Link
-            to={`/courses/${id}`}
-            className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary mb-4"
+            to={`/app/courses/${id}`}
+            className="flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 transition-colors"
           >
             <Icon name="arrow_back" className="text-[18px]" /> {course.title}
           </Link>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 px-2">
-            Уроки
-          </p>
-          <nav className="space-y-1">
-            {courseLessons.map((l, i) => {
-              const active = l.id === lessonId
-              const complete = isLessonComplete(id, l.id)
-              return (
-                <Link
-                  key={l.id}
-                  to={`/courses/${id}/lesson/${l.id}`}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
-                    active
-                      ? 'bg-sky-soft text-primary font-semibold'
-                      : 'text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <span
-                    className={`w-6 h-6 rounded-md grid place-items-center text-xs shrink-0 ${
-                      complete
-                        ? 'bg-accent text-white'
-                        : active
-                        ? 'bg-primary text-white'
-                        : 'bg-slate-100 text-slate-500'
+
+          {/* Lesson list */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3 px-1">
+              Уроки курса
+            </p>
+            <nav className="space-y-1">
+              {courseLessons.map((l, i) => {
+                const active = l.id === lessonId
+                const complete = isLessonComplete(id, l.id)
+                return (
+                  <Link
+                    key={l.id}
+                    to={`/app/courses/${id}/lesson/${l.id}`}
+                    className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
+                      active
+                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        : 'text-slate-600 hover:bg-slate-50'
                     }`}
                   >
-                    {complete ? <Icon name="check" className="text-[16px]" /> : i + 1}
-                  </span>
-                  <span className="line-clamp-1">{l.title}</span>
-                </Link>
-              )
-            })}
-          </nav>
+                    <span className={`w-6 h-6 rounded-md grid place-items-center text-xs shrink-0 font-bold ${
+                      complete
+                        ? 'bg-emerald-500 text-white'
+                        : active
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {complete ? <Icon name="check" className="text-[15px]" /> : i + 1}
+                    </span>
+                    <span className="line-clamp-2 text-xs">{l.title}</span>
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+
+          {/* Activity steps */}
+          {activities.length > 0 && (
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3 px-1">
+                Шаги урока
+              </p>
+              <div className="space-y-1">
+                {activities.map((act, i) => {
+                  const meta = ACTIVITY_META[act.type] || ACTIVITY_META.read
+                  const done = completedSteps.has(i)
+                  const current = step === i
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => (done || i <= step) && setStep(i)}
+                      className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-left transition-all ${
+                        current
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                          : done
+                          ? 'text-emerald-600 hover:bg-emerald-50 cursor-pointer'
+                          : 'text-slate-400 cursor-not-allowed'
+                      }`}
+                    >
+                      <span className={`w-6 h-6 rounded-md grid place-items-center shrink-0 ${
+                        done ? 'bg-emerald-500 text-white' : current ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-300'
+                      }`}>
+                        {done
+                          ? <Icon name="check" className="text-[15px]" />
+                          : <Icon name={meta.icon} className="text-[14px]" />
+                        }
+                      </span>
+                      <span className="text-xs line-clamp-1">{meta.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </aside>
 
-        {/* Контент */}
-        <article>
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 mb-6">
-            <p className="text-sm font-semibold text-primary mb-1">
-              Урок {lessonIndex + 1} из {courseLessons.length}
+        {/* Main content */}
+        <article className="min-w-0">
+          {/* Header */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-slate-400">
+                Урок {lessonIndex + 1} из {courseLessons.length}
+              </p>
               {passed && (
-                <span className="ml-2 inline-flex items-center gap-1 text-accent">
-                  <Icon name="check_circle" className="text-[16px]" filled /> пройден
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 text-sm font-semibold">
+                  <Icon name="check_circle" className="text-[18px]" filled /> Пройден
                 </span>
               )}
-            </p>
-            <h1 className="text-3xl font-extrabold text-slate-800 mb-6">{lesson.title}</h1>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-4">{lesson.title}</h1>
 
-            {/* Видео-плейсхолдер */}
-            <div className="aspect-video bg-slate-100 rounded-2xl grid place-items-center mb-6 border border-slate-200">
-              <div className="text-center text-slate-400">
-                <span className="w-16 h-16 rounded-full bg-white shadow-sm grid place-items-center mx-auto mb-2">
-                  <Icon name="play_arrow" className="text-[36px] text-primary" filled />
-                </span>
-                <p className="font-medium">Видео урока</p>
+            {/* Activity step pills */}
+            {activities.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {activities.map((act, i) => {
+                  const meta = ACTIVITY_META[act.type] || ACTIVITY_META.read
+                  const done = completedSteps.has(i)
+                  const current = step === i
+                  const col = meta.color
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => (done || i <= step) && setStep(i)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                        current
+                          ? colorMap[col] + ' shadow-sm scale-105'
+                          : done
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                      }`}
+                    >
+                      <Icon name={done ? 'check' : meta.icon} className="text-[14px]" filled={done} />
+                      {meta.label}
+                    </button>
+                  )
+                })}
               </div>
-            </div>
-
-            {/* Текст */}
-            <div className="prose prose-slate max-w-none space-y-4">
-              {lesson.content.map((p, i) => (
-                <p key={i} className="text-slate-600 leading-relaxed">
-                  {p}
-                </p>
-              ))}
-            </div>
+            )}
           </div>
 
-          {/* Тест */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-1 flex items-center gap-2">
-              <Icon name="quiz" className="text-[24px] text-primary" /> Мини-тест
-            </h2>
-            <p className="text-sm text-slate-500 mb-6">Ответь на 3 вопроса, чтобы пройти урок</p>
+          {/* Activity panel */}
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 mb-6">
+            {currentActivity?.type === 'read' && (
+              <ActivityRead
+                activity={currentActivity}
+                onComplete={handleStepComplete}
+              />
+            )}
+            {currentActivity?.type === 'video' && (
+              <ActivityVideo
+                activity={currentActivity}
+                onComplete={handleStepComplete}
+              />
+            )}
+            {currentActivity?.type === 'flashcards' && (
+              <ActivityFlashcards
+                key={`flash-${lessonId}-${step}`}
+                activity={currentActivity}
+                onComplete={handleStepComplete}
+              />
+            )}
+            {currentActivity?.type === 'match' && (
+              <ActivityMatch
+                key={`match-${lessonId}-${step}`}
+                activity={currentActivity}
+                onComplete={handleStepComplete}
+              />
+            )}
+            {currentActivity?.type === 'quiz' && (
+              <ActivityQuiz
+                key={`quiz-${lessonId}-${step}`}
+                activity={currentActivity}
+                onComplete={handleStepComplete}
+              />
+            )}
 
-            <div className="space-y-6">
-              {lesson.quiz.map((q, qi) => (
-                <div key={qi}>
-                  <p className="font-semibold text-slate-800 mb-3">
-                    {qi + 1}. {q.question}
-                  </p>
-                  <div className="space-y-2">
-                    {q.options.map((opt, oi) => {
-                      const selected = answers[qi] === oi
-                      const isCorrect = oi === q.correct
-                      let cls =
-                        'border-slate-200 hover:border-primary/60 hover:bg-sky-soft/50'
-                      if (checked) {
-                        if (isCorrect) cls = 'border-accent bg-emerald-50'
-                        else if (selected) cls = 'border-red-400 bg-red-50'
-                        else cls = 'border-slate-200 opacity-60'
-                      } else if (selected) {
-                        cls = 'border-primary bg-sky-soft'
-                      }
-                      return (
-                        <label
-                          key={oi}
-                          className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${cls}`}
-                        >
-                          <input
-                            type="radio"
-                            name={`q-${qi}`}
-                            checked={selected}
-                            disabled={checked}
-                            onChange={() => setAnswers((a) => ({ ...a, [qi]: oi }))}
-                            className="accent-primary w-4 h-4"
-                          />
-                          <span className="text-slate-700 text-sm flex-1">{opt}</span>
-                          {checked && isCorrect && (
-                            <Icon name="check_circle" className="text-[20px] text-accent" filled />
-                          )}
-                          {checked && selected && !isCorrect && (
-                            <Icon name="cancel" className="text-[20px] text-red-500" filled />
-                          )}
-                        </label>
-                      )
-                    })}
-                  </div>
+            {/* Fallback: old lesson format with content + quiz */}
+            {!activities.length && lesson.content && (
+              <div>
+                <div className="space-y-4 mb-8">
+                  {lesson.content.map((p, i) => (
+                    <p key={i} className="text-slate-700 leading-relaxed">{p}</p>
+                  ))}
                 </div>
-              ))}
-            </div>
-
-            {/* Результат */}
-            {checked && (
-              <div
-                className={`mt-6 rounded-xl p-4 font-semibold flex items-center gap-2 ${
-                  allCorrect ? 'bg-emerald-50 text-accent' : 'bg-amber-50 text-amber-700'
-                }`}
-              >
-                <Icon name={allCorrect ? 'verified' : 'info'} className="text-[24px]" filled />
-                Результат: {score} из {lesson.quiz.length}
-                {!allCorrect && ' — попробуйте ещё раз, чтобы пройти урок'}
-              </div>
-            )}
-
-            {/* Кнопки */}
-            <div className="mt-6 flex flex-wrap gap-3">
-              {!allCorrect ? (
-                <button
-                  onClick={handleCheck}
-                  disabled={Object.keys(answers).length < lesson.quiz.length}
-                  className="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  {checked ? 'Проверить снова' : 'Проверить ответы'}
-                </button>
-              ) : (
-                <span className="px-5 py-3 rounded-xl bg-emerald-50 text-accent font-semibold inline-flex items-center gap-2">
-                  <Icon name="task_alt" className="text-[22px]" filled /> Урок пройден!
-                </span>
-              )}
-
-              {/* Следующий урок / завершение */}
-              {allCorrect && !isLast && (
-                <button
-                  onClick={goNext}
-                  className="px-6 py-3 rounded-xl bg-accent text-white font-semibold hover:bg-emerald-600 transition-colors inline-flex items-center gap-2"
-                >
-                  Следующий урок <Icon name="arrow_forward" className="text-[20px]" />
-                </button>
-              )}
-            </div>
-
-            {/* Завершение курса */}
-            {allCorrect && isLast && (
-              <div className="mt-6 bg-gradient-to-br from-primary to-primary-dark text-white rounded-2xl p-6 text-center">
-                <p className="text-2xl font-extrabold mb-1">Курс завершён!</p>
-                <p className="text-white/90 mb-5">
-                  Поздравляем! Ты прошёл все уроки курса «{course.title}».
-                </p>
-                <Link
-                  to={`/certificate/${id}`}
-                  className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-primary font-bold hover:bg-sky-soft transition-colors"
-                >
-                  <Icon name="workspace_premium" className="text-[22px]" filled /> Получить сертификат
-                </Link>
+                {/* Old quiz fallback */}
+                {lesson.quiz?.length > 0 && (
+                  <ActivityQuiz
+                    activity={{ title: 'Мини-тест', questions: lesson.quiz.map(q => ({ ...q, options: q.options })) }}
+                    onComplete={() => { completeLesson(id, lessonId) }}
+                  />
+                )}
               </div>
             )}
           </div>
+
+          {/* Passed + navigation */}
+          {passed && (
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+              {isLast ? (
+                <div className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl p-6 text-center">
+                  <p className="text-3xl mb-1">🎉</p>
+                  <p className="text-xl font-extrabold mb-1">Курс завершён!</p>
+                  <p className="text-white/80 text-sm mb-5">
+                    Ты прошёл все уроки курса «{course.title}»
+                  </p>
+                  <Link
+                    to={`/certificate/${id}`}
+                    className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-indigo-700 font-bold hover:bg-indigo-50 transition-colors shadow-lg"
+                  >
+                    <Icon name="workspace_premium" className="text-[22px]" filled /> Получить сертификат
+                  </Link>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-semibold text-slate-800">Урок пройден! 🏆</p>
+                    <p className="text-sm text-slate-400">Готов к следующему?</p>
+                  </div>
+                  <button
+                    onClick={goNext}
+                    className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                  >
+                    Следующий урок <Icon name="arrow_forward" className="text-[20px]" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </article>
       </div>
     </div>

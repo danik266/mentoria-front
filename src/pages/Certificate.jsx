@@ -15,8 +15,8 @@ export default function Certificate() {
       {/* Панель действий (не печатается) */}
       <div className="no-print w-full max-w-3xl flex items-center justify-between mb-6">
         <Link
-          to={course ? `/courses/${courseId}` : '/courses'}
-          className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary"
+          to={course ? `/app/courses/${courseId}` : '/app/courses'}
+          className="text-slate-400 hover:text-slate-600 transition-colors"
         >
           <Icon name="arrow_back" className="text-[18px]" /> Назад
         </Link>

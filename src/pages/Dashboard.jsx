@@ -8,6 +8,7 @@ import {
   getOpportunities,
   getSaved,
   completedCount,
+  isCourseStarted,
   daysUntil,
   formatDate,
   urgencyColor,
@@ -27,7 +28,7 @@ export default function Dashboard() {
       const done = completedCount(c.id)
       return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 }
     })
-    .filter((c) => c.done > 0)
+    .filter((c) => isCourseStarted(c.id))
 
   // Секция 2 — сохранённые возможности
   const savedOps = allOps.filter((o) => savedIds.includes(o.id))
@@ -74,13 +75,13 @@ export default function Dashboard() {
       {/* Секция 1 — Мои курсы */}
       <Section title="Мои курсы" icon="play_lesson">
         {startedCourses.length === 0 ? (
-          <Empty text="Ты ещё не начал ни одного курса" link="/courses" linkText="Выбрать курс" />
+          <Empty text="Ты ещё не начал ни одного курса" link="/app/courses" linkText="Выбрать курс" />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {startedCourses.map((c) => (
               <Link
                 key={c.id}
-                to={`/courses/${c.id}`}
+                to={`/app/courses/${c.id}`}
                 className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-center gap-3 mb-4">

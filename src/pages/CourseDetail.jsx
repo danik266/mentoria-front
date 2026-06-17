@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
-import { getCourses, isLessonComplete, completedCount, getLessons } from '../utils/storage'
+import { getCourses, isLessonComplete, completedCount, getLessons, startCourse, isCourseStarted } from '../utils/storage'
 
 export default function CourseDetail() {
   const { id } = useParams()
@@ -15,7 +15,7 @@ export default function CourseDetail() {
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
         <p className="text-slate-500 mb-4">Курс не найден</p>
-        <Link to="/courses" className="text-primary font-semibold hover:underline">
+        <Link to="/app/courses" className="text-primary font-semibold hover:underline">
           ← К списку курсов
         </Link>
       </div>
@@ -25,6 +25,7 @@ export default function CourseDetail() {
   const total = courseLessons.length
   const done = completedCount(id)
   const pct = total ? Math.round((done / total) * 100) : 0
+  const started = isCourseStarted(id)
 
   // Первый непройденный урок (или последний, если все пройдены)
   const firstIncomplete =
@@ -41,24 +42,35 @@ export default function CourseDetail() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Link
-        to="/courses"
+        to="/app/courses"
         className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary mb-6"
       >
         <Icon name="arrow_back" className="text-[18px]" /> К курсам
       </Link>
 
       {/* Заголовок */}
-      <div className={`rounded-3xl bg-gradient-to-br ${course.gradient} text-white p-8 mb-8 relative overflow-hidden`}>
+      <div className="rounded-3xl text-white p-8 mb-8 relative overflow-hidden">
+        {course.cover ? (
+          <div className="absolute inset-0 z-0">
+            <img src={course.cover} alt="" className="w-full h-full object-cover" />
+            {/* Более темный градиентный оверлей для идеальной читаемости текста */}
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/50" />
+          </div>
+        ) : (
+          <div className={`absolute inset-0 z-0 bg-gradient-to-br ${course.gradient}`} />
+        )}
         <Icon
           name={course.icon}
-          className="text-[140px] absolute -right-4 -bottom-6 text-white/15"
+          className="text-[140px] absolute -right-4 -bottom-6 text-white/15 z-0"
           filled
         />
-        <span className="relative inline-block text-xs font-semibold bg-white/25 px-3 py-1 rounded-full mb-3 backdrop-blur">
-          {course.level}
-        </span>
-        <h1 className="relative text-3xl font-extrabold mb-2">{course.title}</h1>
-        <p className="relative text-white/90 max-w-xl">{course.description}</p>
+        <div className="relative z-10">
+          <span className="relative inline-block text-xs font-semibold bg-white/25 px-3 py-1 rounded-full mb-3 backdrop-blur">
+            {course.level}
+          </span>
+          <h1 className="relative text-3xl font-extrabold mb-2">{course.title}</h1>
+          <p className="relative text-white/90 max-w-xl">{course.description}</p>
+        </div>
 
         <div className="relative mt-6 max-w-md">
           <div className="flex justify-between text-sm mb-1">
@@ -83,7 +95,12 @@ export default function CourseDetail() {
             <button
               key={lesson.id}
               disabled={!clickable}
-              onClick={() => clickable && navigate(`/courses/${id}/lesson/${lesson.id}`)}
+              onClick={() => {
+                if (clickable) {
+                  startCourse(id)
+                  navigate(`/app/courses/${id}/lesson/${lesson.id}`)
+                }
+              }}
               className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border transition-all ${
                 clickable
                   ? 'bg-white border-slate-100 shadow-sm hover:border-primary hover:shadow-md cursor-pointer'
@@ -127,11 +144,12 @@ export default function CourseDetail() {
 
       {/* Кнопка действия */}
       <Link
-        to={`/courses/${id}/lesson/${firstIncomplete.id}`}
+        onClick={() => startCourse(id)}
+        to={`/app/courses/${id}/lesson/${firstIncomplete.id}`}
         className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
       >
         <Icon name="play_arrow" className="text-[22px]" filled />
-        {done > 0 ? 'Продолжить курс' : 'Начать курс'}
+        {started ? 'Продолжить курс' : 'Начать курс'}
       </Link>
     </div>
   )

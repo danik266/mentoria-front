@@ -84,6 +84,29 @@ export function getProgress() {
   return read(KEYS.progress, {})
 }
 
+export function startCourse(courseId) {
+  const progress = getProgress()
+  if (!progress[courseId]) {
+    progress[courseId] = {}
+    write(KEYS.progress, progress)
+    asyncSyncBack(getProfile(), progress, getSaved())
+  }
+}
+
+export function isCourseStarted(courseId) {
+  const progress = getProgress()
+  return progress.hasOwnProperty(courseId)
+}
+
+export function removeCourseProgress(courseId) {
+  const progress = getProgress()
+  if (progress[courseId]) {
+    delete progress[courseId]
+    write(KEYS.progress, progress)
+    asyncSyncBack(getProfile(), progress, getSaved())
+  }
+}
+
 export function completeLesson(courseId, lessonId) {
   const progress = getProgress()
   if (!progress[courseId]) progress[courseId] = {}

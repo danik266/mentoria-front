@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
-import { getCourses, completedCount, getLessons } from '../utils/storage'
+import { getCourses, completedCount, getLessons, isCourseStarted } from '../utils/storage'
 
 export default function Courses() {
   const courses = useMemo(() => getCourses(), [])
@@ -19,16 +19,22 @@ export default function Courses() {
           const total = (lessons[course.id] || []).length || course.lessonsCount || 0
           const done = completedCount(course.id)
           const pct = total ? Math.round((done / total) * 100) : 0
-          const started = done > 0
+          const started = isCourseStarted(course.id)
 
           return (
             <div
               key={course.id}
               className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
             >
-              {/* Обложка-градиент */}
-              <div className={`h-36 bg-gradient-to-br ${course.gradient} grid place-items-center relative`}>
-                <Icon name={course.icon} className="text-white text-[56px]" filled />
+              {/* Обложка */}
+              <div className={`h-36 bg-gradient-to-br ${course.gradient} relative overflow-hidden`}>
+                {course.cover ? (
+                  <img src={course.cover} alt={course.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full grid place-items-center">
+                    <Icon name={course.icon} className="text-white text-[56px]" filled />
+                  </div>
+                )}
                 <span className="absolute top-3 right-3 text-xs font-semibold bg-white/25 text-white px-2.5 py-1 rounded-full backdrop-blur">
                   {course.level}
                 </span>
@@ -63,7 +69,7 @@ export default function Courses() {
                 )}
 
                 <Link
-                  to={`/courses/${course.id}`}
+                  to={`/app/courses/${course.id}`}
                   className="mt-auto w-full py-2.5 rounded-xl bg-primary text-white text-center font-semibold text-sm hover:bg-primary-dark transition-colors"
                 >
                   {started ? 'Продолжить' : 'Начать курс'}

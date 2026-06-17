@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Icon from '../components/Icon'
@@ -13,10 +13,13 @@ import {
   formatDate,
   urgencyColor,
   urgencyDot,
+  isCourseStarted,
+  removeCourseProgress,
 } from '../utils/storage'
 
 export default function DashboardHome() {
   const { user } = useAuth()
+  const [refresh, setRefresh] = useState(0)
   const profile = getProfile()
   const courses = useMemo(() => getCourses(), [])
   const allOps = useMemo(() => getOpportunities(), [])
@@ -28,7 +31,7 @@ export default function DashboardHome() {
       const done = completedCount(c.id)
       return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 }
     })
-    .filter((c) => c.done > 0)
+    .filter((c) => isCourseStarted(c.id))
 
   const savedOps = allOps.filter((o) => savedIds.includes(o.id))
 
@@ -47,7 +50,7 @@ export default function DashboardHome() {
 
   const totalCourses = courses.length
   const completedCourses = startedCourses.filter((c) => c.pct === 100).length
-  const activeCourses = startedCourses.filter((c) => c.pct > 0 && c.pct < 100).length
+  const activeCourses = startedCourses.filter((c) => c.pct < 100).length
 
   const displayName = user?.name || profile?.name || 'Ученик'
 
@@ -93,30 +96,50 @@ export default function DashboardHome() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {startedCourses.map((c) => (
-              <Link
-                key={c.id}
-                to={`/app/courses/${c.id}`}
-                className="group bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-indigo-100 transition-all duration-300"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} grid place-items-center shadow-md group-hover:scale-105 transition-transform`}>
-                    <Icon name={c.icon} className="text-white text-[26px]" filled />
-                  </span>
-                  <div>
-                    <p className="font-bold text-slate-800">{c.title}</p>
-                    <p className="text-xs text-slate-400">
-                      {c.done} из {c.total} уроков
-                    </p>
+              <div key={c.id} className="relative group h-full">
+                <Link
+                  to={`/app/courses/${c.id}`}
+                  className="block h-full bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-indigo-100 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3 mb-4 pr-6">
+                    <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} grid place-items-center shadow-md group-hover:scale-105 transition-transform overflow-hidden shrink-0`}>
+                      {c.cover ? (
+                        <img src={c.cover} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <Icon name={c.icon} className="text-white text-[26px]" filled />
+                      )}
+                    </span>
+                    <div>
+                      <p className="font-bold text-slate-800 line-clamp-2 leading-tight">{c.title}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        {c.done} из {c.total} уроков
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex justify-between text-xs text-slate-500 mb-1.5">
-                  <span>Прогресс</span>
-                  <span className="font-semibold text-indigo-600">{c.pct}%</span>
-                </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" style={{ width: `${c.pct}%` }} />
-                </div>
-              </Link>
+                  <div className="flex justify-between text-xs text-slate-500 mb-1.5 mt-auto">
+                    <span>Прогресс</span>
+                    <span className="font-semibold text-indigo-600">{c.pct}%</span>
+                  </div>
+                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" style={{ width: `${c.pct}%` }} />
+                  </div>
+                </Link>
+                
+                {/* Кнопка сброса прогресса */}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (window.confirm('Сбросить весь прогресс и убрать этот курс из "Моих курсов"?')) {
+                      removeCourseProgress(c.id);
+                      setRefresh(r => r + 1);
+                    }
+                  }}
+                  className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10"
+                  title="Убрать из моих курсов"
+                >
+                  <Icon name="delete" className="text-[20px]" filled />
+                </button>
+              </div>
             ))}
           </div>
         )}
