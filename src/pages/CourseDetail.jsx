@@ -40,7 +40,7 @@ export default function CourseDetail() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <Link
         to="/app/courses"
         className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-primary mb-6"
@@ -49,7 +49,7 @@ export default function CourseDetail() {
       </Link>
 
       {/* Заголовок */}
-      <div className="rounded-3xl text-white p-8 mb-8 relative overflow-hidden">
+      <div className="rounded-3xl text-white p-6 sm:p-8 mb-6 sm:mb-8 relative overflow-hidden">
         {course.cover ? (
           <div className="absolute inset-0 z-0">
             <img src={course.cover} alt="" className="w-full h-full object-cover" />
@@ -68,7 +68,7 @@ export default function CourseDetail() {
           <span className="relative inline-block text-xs font-semibold bg-white/25 px-3 py-1 rounded-full mb-3 backdrop-blur">
             {course.level}
           </span>
-          <h1 className="relative text-3xl font-extrabold mb-2">{course.title}</h1>
+          <h1 className="relative text-2xl sm:text-3xl font-extrabold mb-2">{course.title}</h1>
           <p className="relative text-white/90 max-w-xl">{course.description}</p>
         </div>
 

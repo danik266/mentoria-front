@@ -314,9 +314,9 @@ export default function Admin() {
 
   // ---- Панель ----
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white">{t('admin.title')}</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">{t('admin.title')}</h1>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <ThemeToggle />
@@ -330,7 +330,7 @@ export default function Admin() {
       </div>
 
       {/* Вкладки */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex gap-1 sm:gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
         {[
           { key: 'opportunities', label: t('nav.opportunities'), icon: 'explore' },
           { key: 'courses', label: t('nav.courses'), icon: 'menu_book' },
@@ -339,7 +339,7 @@ export default function Admin() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2.5 font-semibold text-sm inline-flex items-center gap-1.5 border-b-2 -mb-px transition-colors ${
+            className={`px-3 sm:px-4 py-2.5 font-semibold text-sm inline-flex items-center gap-1.5 border-b-2 -mb-px transition-colors whitespace-nowrap shrink-0 ${
               tab === t.key
                 ? 'border-primary text-primary'
                 : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700'
@@ -353,7 +353,7 @@ export default function Admin() {
       {/* Возможности */}
       {tab === 'opportunities' && (
         <div>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
             <p className="text-slate-500 dark:text-slate-400 text-sm">{ops.length} возможностей</p>
             <button
               onClick={() => setOpModal({})}
@@ -364,7 +364,7 @@ export default function Admin() {
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
                   <th className="px-4 py-3 font-medium">Название</th>
@@ -410,7 +410,7 @@ export default function Admin() {
       {/* Курсы */}
       {tab === 'courses' && (
         <div>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
             <p className="text-slate-500 dark:text-slate-400 text-sm">{crs.length} курсов</p>
             <button
               onClick={() => {
@@ -505,7 +505,7 @@ export default function Admin() {
                     <Icon name="school" className="text-primary text-[22px]" /> Ученики
                   </h3>
                   <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full min-w-[600px] text-sm">
                       <thead>
                         <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
                           <th className="px-4 py-3 font-medium">Имя</th>
