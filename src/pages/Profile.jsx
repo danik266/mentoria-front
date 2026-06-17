@@ -162,19 +162,19 @@ export default function Profile() {
       </div>
 
       {/* Danger zone */}
-      <div className="mt-10 bg-red-50 rounded-3xl border border-red-100 p-6">
-        <h3 className="font-bold text-red-800 text-base mb-1 flex items-center gap-2">
-          <Icon name="warning" className="text-[22px] text-red-500" filled />
+      <div className="mt-10 bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/30 p-6">
+        <h3 className="font-bold text-red-800 dark:text-red-400 text-base mb-1 flex items-center gap-2">
+          <Icon name="warning" className="text-[22px] text-red-500 dark:text-red-400" filled />
           Опасная зона
         </h3>
-        <p className="text-xs text-red-600/70 mb-4">Действия здесь необратимы</p>
+        <p className="text-xs text-red-600/70 dark:text-red-400/70 mb-4">Действия здесь необратимы</p>
         <button
           onClick={() => {
             if (confirm('Вы уверены что хотите выйти из аккаунта?')) {
               logout()
             }
           }}
-          className="px-6 py-2.5 rounded-xl border border-red-200 bg-white dark:bg-slate-900 text-red-600 font-semibold text-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200"
+          className="px-6 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 bg-white dark:bg-slate-900 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-600 hover:text-white hover:border-red-600 dark:hover:bg-red-900/40 dark:hover:text-red-300 dark:hover:border-red-800 transition-all duration-200"
         >
           Выйти из аккаунта
         </button>
