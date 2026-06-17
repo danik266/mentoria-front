@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
-import { lessons, categoryColors } from '../data/mock'
+import { categoryColors } from '../data/mock'
 import {
   getProfile,
   getCourses,
@@ -13,6 +13,7 @@ import {
   formatDate,
   urgencyColor,
   urgencyDot,
+  getLessons,
 } from '../utils/storage'
 
 export default function Dashboard() {
@@ -22,9 +23,10 @@ export default function Dashboard() {
   const savedIds = getSaved()
 
   // Секция 1 — начатые курсы
+  const allLessons = useMemo(() => getLessons(), [])
   const startedCourses = courses
     .map((c) => {
-      const total = (lessons[c.id] || []).length || c.lessonsCount || 0
+      const total = (allLessons[c.id] || []).length || c.lessonsCount || 0
       const done = completedCount(c.id)
       return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 }
     })

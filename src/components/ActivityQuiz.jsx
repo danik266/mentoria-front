@@ -129,14 +129,12 @@ export default function ActivityQuiz({ activity, onComplete }) {
           >
             <Icon name="refresh" className="text-[20px]" /> Попробовать снова
           </button>
-        ) : null}
-
-        {allCorrect && (
+        ) : (
           <button
             onClick={onComplete}
             className="flex-1 py-3.5 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
           >
-            <Icon name="task_alt" className="text-[22px]" filled /> Завершить урок!
+            Следующий урок <Icon name="arrow_forward" className="text-[22px]" />
           </button>
         )}
       </div>

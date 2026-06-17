@@ -81,6 +81,8 @@ export default function Lesson() {
     if (newCompleted.size === activities.length) {
       startCourse(id)
       completeLesson(id, lessonId)
+      goNext()
+      return
     }
 
     if (step < activities.length - 1) {

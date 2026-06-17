@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Icon from '../components/Icon'
-import { lessons, categoryColors } from '../data/mock'
+import { categoryColors } from '../data/mock'
 import {
   getProfile,
   getCourses,
@@ -15,6 +15,7 @@ import {
   urgencyDot,
   isCourseStarted,
   removeCourseProgress,
+  getLessons,
 } from '../utils/storage'
 
 export default function DashboardHome() {
@@ -24,10 +25,11 @@ export default function DashboardHome() {
   const courses = useMemo(() => getCourses(), [])
   const allOps = useMemo(() => getOpportunities(), [])
   const savedIds = getSaved()
+  const allLessons = useMemo(() => getLessons(), [])
 
   const startedCourses = courses
     .map((c) => {
-      const total = (lessons[c.id] || []).length || c.lessonsCount || 0
+      const total = (allLessons[c.id] || []).length || c.lessonsCount || 0
       const done = completedCount(c.id)
       return { ...c, total, done, pct: total ? Math.round((done / total) * 100) : 0 }
     })

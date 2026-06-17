@@ -133,7 +133,9 @@ export function isLessonComplete(courseId, lessonId) {
 // Кол-во пройденных уроков курса
 export function completedCount(courseId) {
   const progress = getProgress()
-  return Object.keys(progress[courseId] || {}).length
+  const rawCount = Object.keys(progress[courseId] || {}).length
+  const total = (getLessons()[courseId] || []).length || (getCourses().find(c => c.id === courseId)?.lessonsCount) || 0
+  return total > 0 ? Math.min(rawCount, total) : rawCount
 }
 
 // ---------- ВОЗМОЖНОСТИ ----------
