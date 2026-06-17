@@ -1,106 +1,142 @@
-import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
+import { useLanguage } from '../contexts/LanguageContext'
+import { useAuth } from '../contexts/AuthContext'
+import { getOpportunities, getEntryPath, daysUntil } from '../utils/storage'
 
-const features = [
-  {
-    icon: 'explore',
-    title: 'Каталог возможностей',
-    desc: 'Олимпиады, хакатоны, стипендии и летние школы — всё в одном месте с удобными фильтрами и дедлайнами.',
-    color: 'bg-indigo-50 text-primary',
-  },
-  {
-    icon: 'play_lesson',
-    title: 'Асинхронные курсы',
-    desc: 'Учись когда удобно: видео, материалы и тесты доступны 24/7. Прогресс сохраняется автоматически.',
-    color: 'bg-emerald-50 text-accent',
-  },
-  {
-    icon: 'auto_awesome',
-    title: 'AI-рекомендации',
-    desc: 'Умный помощник подбирает возможности и курсы под твои интересы, класс и цели поступления.',
-    color: 'bg-sky-50 text-sky-600',
-  },
+const localeMap = { ru: 'ru-RU', kk: 'kk-KZ', en: 'en-US' }
+
+const fields = [
+  { key: 'field.programming', icon: 'code' },
+  { key: 'field.business', icon: 'business_center' },
+  { key: 'field.finance', icon: 'payments' },
+  { key: 'field.math', icon: 'functions' },
+  { key: 'field.science', icon: 'science' },
+  { key: 'field.english', icon: 'language' },
 ]
 
 export default function Home() {
+  const { t, lang } = useLanguage()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  const go = (appPath) => navigate(getEntryPath(user, appPath))
+
+  // Ближайшие 4 дедлайна из реальных данных
+  const upcoming = useMemo(() => {
+    return getOpportunities()
+      .filter((o) => daysUntil(o.deadline) >= 0)
+      .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+      .slice(0, 4)
+  }, [])
+
+  const formatShort = (dateStr) =>
+    new Date(dateStr).toLocaleDateString(localeMap[lang] || 'en-US', {
+      day: 'numeric',
+      month: 'short',
+    })
+
+  const gradesRange = (grades) => {
+    if (!grades?.length) return ''
+    const min = Math.min(...grades)
+    const max = Math.max(...grades)
+    return min === max ? `${min}` : `${min}–${max}`
+  }
+
   return (
     <div>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-sky-soft to-white">
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
-          <span className="inline-flex items-center gap-2 bg-white border border-slate-100 shadow-sm text-primary text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
-            Образовательная платформа для 8–11 классов
-          </span>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-800 leading-tight max-w-4xl mx-auto">
-            Найди возможности. <br className="hidden sm:block" />
-            <span className="text-primary">Учись в своём темпе.</span>
-          </h1>
-          <p className="mt-6 text-lg text-slate-600 max-w-2xl mx-auto">
-            Mentoria Hub — это асинхронное обучение и каталог образовательных возможностей для
-            школьников Казахстана. Олимпиады, курсы и поступление в топ-вузы — всё в одном месте.
-          </p>
+      {/* ===== HERO ===== */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-16 sm:pb-20">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          {/* Левая колонка */}
+          <div>
+            <span className="text-sm font-semibold text-brand">{t('home.eyebrow')}</span>
+            <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.08] sm:leading-[1.05]">
+              {t('home.heroTitle')}
+            </h1>
+            <p className="mt-5 sm:mt-6 text-base sm:text-lg text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
+              {t('home.heroSubtitle')}
+            </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              to="/opportunities"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-semibold shadow-sm hover:bg-primary-dark transition-colors"
-            >
-              <Icon name="explore" className="text-[20px]" /> Найти возможности
-            </Link>
-            <Link
-              to="/courses"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent text-white font-semibold shadow-sm hover:bg-emerald-600 transition-colors"
-            >
-              <Icon name="play_circle" className="text-[20px]" /> Начать курс
-            </Link>
-            <Link
-              to="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold hover:border-primary hover:text-primary transition-colors"
-            >
-              <Icon name="person_add" className="text-[20px]" /> Присоединиться
-            </Link>
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => go('/app/opportunities')}
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-brand text-white font-semibold shadow-sm hover:bg-brand-dark transition-all hover:-translate-y-0.5"
+              >
+                {t('home.cta.findPrograms')} <Icon name="arrow_forward" className="text-[20px]" />
+              </button>
+              <button
+                onClick={() => go('/app/courses')}
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full font-semibold text-slate-700 dark:text-slate-200 hover:text-brand hover:bg-brand-soft dark:hover:bg-slate-800 transition-colors"
+              >
+                <Icon name="menu_book" className="text-[20px]" /> {t('home.cta.viewCourses')}
+              </button>
+            </div>
+          </div>
+
+          {/* Правая колонка — карточка дедлайнов */}
+          <div className="rounded-3xl border border-white/50 dark:border-white/10 bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl shadow-xl shadow-slate-900/5 p-5 sm:p-7">
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {t('home.deadlines.title')}
+                </h2>
+                <p className="text-sm text-slate-400 dark:text-slate-500">
+                  {t('home.deadlines.subtitle')}
+                </p>
+              </div>
+              <span className="text-brand">
+                <Icon name="event" className="text-[26px]" />
+              </span>
+            </div>
+
+            {/* Таймлайн */}
+            <ol className="relative ml-1 border-l border-slate-200 dark:border-slate-700 space-y-7">
+              {upcoming.map((o) => (
+                <li key={o.id} className="relative pl-6">
+                  <span className="absolute -left-[6px] top-1.5 w-3 h-3 rounded-full bg-brand ring-4 ring-brand/15" />
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">
+                      {formatShort(o.deadline)}
+                    </span>
+                    <span className="text-slate-400 dark:text-slate-500">
+                      {t(`cat.${o.category}`)}
+                    </span>
+                  </div>
+                  <h3 className="mt-1 font-semibold text-slate-900 dark:text-white">{o.title}</h3>
+                  <p className="mt-0.5 text-sm text-slate-400 dark:text-slate-500">
+                    {t('home.grades')} {gradesRange(o.grades)} · {t(`fmt.${o.format}`)}
+                  </p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-slate-800">Почему Mentoria Hub?</h2>
-          <p className="mt-3 text-slate-600">Всё, что нужно для роста — в одном приложении</p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f) => (
-            <div
-              key={f.title}
-              className="bg-white rounded-2xl border border-slate-100 shadow-sm p-7 hover:shadow-md hover:-translate-y-1 transition-all"
-            >
-              <div className={`w-14 h-14 rounded-2xl grid place-items-center mb-5 ${f.color}`}>
-                <Icon name={f.icon} className="text-[30px]" filled />
-              </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">{f.title}</h3>
-              <p className="text-slate-600 leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA полоса */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="bg-primary rounded-3xl px-8 py-12 text-center text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <h2 className="relative text-3xl font-extrabold mb-3">Готов начать свой путь?</h2>
-          <p className="relative text-white/90 mb-8 max-w-xl mx-auto">
-            Заполни короткий профиль — и мы подберём возможности специально для тебя.
-          </p>
-          <Link
-            to="/register"
-            className="relative inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-primary font-bold hover:bg-sky-soft transition-colors"
-          >
-            Создать профиль <Icon name="arrow_forward" className="text-[20px]" />
-          </Link>
+      {/* ===== SEARCH BY FIELD ===== */}
+      <section>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-16">
+          <h2 className="text-sm font-semibold text-brand mb-6">{t('home.searchByField')}</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {fields.map((f) => (
+              <button
+                key={f.key}
+                onClick={() => go('/app/opportunities')}
+                className="group flex items-center gap-4 text-left p-4 sm:p-5 rounded-2xl border border-white/50 dark:border-white/10 bg-white/55 dark:bg-slate-900/50 backdrop-blur-md hover:border-brand hover:bg-white/80 dark:hover:bg-slate-900/70 hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <span className="w-11 h-11 shrink-0 grid place-items-center rounded-xl bg-brand-soft text-brand dark:bg-brand/15 group-hover:bg-brand group-hover:text-white transition-colors">
+                  <Icon name={f.icon} className="text-[24px]" />
+                </span>
+                <span className="font-semibold text-slate-800 dark:text-slate-100">{t(f.key)}</span>
+                <Icon
+                  name="arrow_forward"
+                  className="text-[20px] ml-auto text-slate-300 dark:text-slate-600 group-hover:text-brand transition-colors"
+                />
+              </button>
+            ))}
+          </div>
         </div>
       </section>
     </div>

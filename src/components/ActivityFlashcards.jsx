@@ -12,24 +12,24 @@ function FlashCard({ card, index, total }) {
       >
         {/* Front */}
         <div
-          className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg flex flex-col items-center justify-center p-6 text-white"
+          className="absolute inset-0 bg-gradient-to-br from-brand to-brand-dark rounded-2xl shadow-lg flex flex-col items-center justify-center p-6 text-white"
           style={{ backfaceVisibility: 'hidden' }}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200 mb-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-soft mb-3">
             Карточка {index + 1} из {total} · Нажми чтобы перевернуть
           </p>
           <p className="text-xl font-bold text-center">{card.front}</p>
-          <span className="mt-4 text-indigo-200">
+          <span className="mt-4 text-brand-soft">
             <Icon name="flip" className="text-[24px]" />
           </span>
         </div>
 
         {/* Back */}
         <div
-          className="absolute inset-0 bg-white rounded-2xl shadow-lg border-2 border-indigo-100 flex flex-col items-center justify-center p-6"
+          className="absolute inset-0 bg-white rounded-2xl shadow-lg border-2 border-brand-soft flex flex-col items-center justify-center p-6"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
-          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400 mb-3">Ответ</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-light mb-3">Ответ</p>
           <p className="text-lg text-slate-800 text-center leading-relaxed">{card.back}</p>
         </div>
       </div>
@@ -58,8 +58,8 @@ export default function ActivityFlashcards({ activity, onComplete }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-2">
-        <span className="w-10 h-10 rounded-xl bg-purple-50 grid place-items-center">
-          <Icon name="style" className="text-[22px] text-purple-500" filled />
+        <span className="w-10 h-10 rounded-xl bg-brand-soft grid place-items-center">
+          <Icon name="style" className="text-[22px] text-brand-light" filled />
         </span>
         <div>
           <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
@@ -75,7 +75,7 @@ export default function ActivityFlashcards({ activity, onComplete }) {
             onClick={() => setCurrent(i)}
             className={`w-8 h-8 rounded-lg text-sm font-semibold transition-all ${
               i === current
-                ? 'bg-indigo-600 text-white shadow-md scale-110'
+                ? 'bg-brand text-white shadow-md scale-110'
                 : seen.has(i)
                 ? 'bg-emerald-100 text-emerald-700'
                 : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
@@ -99,7 +99,7 @@ export default function ActivityFlashcards({ activity, onComplete }) {
         <button
           onClick={handleNext}
           disabled={current === activity.cards.length - 1}
-          className="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="flex-1 py-3 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
         >
           Вперёд <Icon name="arrow_forward" className="text-[20px]" />
         </button>

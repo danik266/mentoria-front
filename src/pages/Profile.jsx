@@ -38,7 +38,7 @@ export default function Profile() {
       {/* Avatar & Account info */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
         <div className="flex items-center gap-5">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 grid place-items-center text-white text-2xl font-bold shadow-lg shadow-indigo-500/20">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-light to-brand-light grid place-items-center text-white text-2xl font-bold shadow-lg shadow-brand/20">
             {(name || user?.email || '?')
               .split(' ')
               .map((w) => w[0])
@@ -60,7 +60,7 @@ export default function Profile() {
       {/* Personal info */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
-          <Icon name="badge" className="text-[22px] text-indigo-500" filled />
+          <Icon name="badge" className="text-[22px] text-brand" filled />
           Личные данные
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -71,7 +71,7 @@ export default function Profile() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ваше имя"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-300 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
             />
           </div>
           <div>
@@ -79,7 +79,7 @@ export default function Profile() {
             <select
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-300 transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
             >
               {[8, 9, 10, 11].map((g) => (
                 <option key={g} value={g}>
@@ -94,7 +94,7 @@ export default function Profile() {
       {/* Interests */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 text-base mb-1 flex items-center gap-2">
-          <Icon name="interests" className="text-[22px] text-indigo-500" filled />
+          <Icon name="interests" className="text-[22px] text-brand" filled />
           Интересы
         </h3>
         <p className="text-xs text-slate-400 mb-4">Выберите области, которые вам интересны</p>
@@ -107,8 +107,8 @@ export default function Profile() {
                 onClick={() => toggleInterest(item)}
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20 scale-[1.02]'
-                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50'
+                    ? 'bg-brand text-white shadow-md shadow-brand/20 scale-[1.02]'
+                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-brand-soft hover:bg-brand-soft'
                 }`}
               >
                 {item}
@@ -121,7 +121,7 @@ export default function Profile() {
       {/* Goals */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 text-base mb-1 flex items-center gap-2">
-          <Icon name="flag" className="text-[22px] text-indigo-500" filled />
+          <Icon name="flag" className="text-[22px] text-brand" filled />
           Цели
         </h3>
         <p className="text-xs text-slate-400 mb-4">Что вы хотите достичь?</p>
@@ -149,7 +149,7 @@ export default function Profile() {
       <div className="flex items-center gap-4">
         <button
           onClick={handleSave}
-          className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-bold text-sm hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/20 hover:-translate-y-0.5"
+          className="px-8 py-3 rounded-xl bg-gradient-to-r from-brand to-brand text-white font-bold text-sm hover:from-brand hover:to-brand-light transition-all duration-300 shadow-lg shadow-brand/20 hover:-translate-y-0.5"
         >
           Сохранить изменения
         </button>

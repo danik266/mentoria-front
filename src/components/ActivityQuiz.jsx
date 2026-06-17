@@ -38,7 +38,7 @@ export default function ActivityQuiz({ activity, onComplete }) {
       {/* Progress bar */}
       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
+          className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-500"
           style={{ width: `${(Object.keys(answers).length / total) * 100}%` }}
         />
       </div>
@@ -50,7 +50,7 @@ export default function ActivityQuiz({ activity, onComplete }) {
         {activity.questions.map((q, qi) => (
           <div key={`${retry}-${qi}`} className="bg-slate-50 rounded-2xl p-5">
             <p className="font-semibold text-slate-800 mb-4 flex items-start gap-2">
-              <span className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 text-sm font-bold grid place-items-center shrink-0 mt-0.5">
+              <span className="w-7 h-7 rounded-lg bg-brand-soft text-brand-dark text-sm font-bold grid place-items-center shrink-0 mt-0.5">
                 {qi + 1}
               </span>
               {q.question}
@@ -59,13 +59,13 @@ export default function ActivityQuiz({ activity, onComplete }) {
               {q.options.map((opt, oi) => {
                 const selected = answers[qi] === oi
                 const isCorrect = oi === q.correct
-                let cls = 'border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40 cursor-pointer'
+                let cls = 'border-slate-200 bg-white hover:border-brand-light hover:bg-brand-soft/40 cursor-pointer'
                 if (checked) {
                   if (isCorrect) cls = 'border-emerald-400 bg-emerald-50'
                   else if (selected) cls = 'border-red-400 bg-red-50'
                   else cls = 'border-slate-200 bg-white opacity-50'
                 } else if (selected) {
-                  cls = 'border-indigo-400 bg-indigo-50 shadow-sm'
+                  cls = 'border-brand-light bg-brand-soft shadow-sm'
                 }
                 return (
                   <label
@@ -78,7 +78,7 @@ export default function ActivityQuiz({ activity, onComplete }) {
                       checked={selected}
                       disabled={checked}
                       onChange={() => !checked && setAnswers(a => ({ ...a, [qi]: oi }))}
-                      className="accent-indigo-600 w-4 h-4 shrink-0"
+                      className="accent-brand w-4 h-4 shrink-0"
                     />
                     <span className="text-slate-700 text-sm flex-1">{opt}</span>
                     {checked && isCorrect && <Icon name="check_circle" className="text-[20px] text-emerald-500 shrink-0" filled />}
@@ -118,14 +118,14 @@ export default function ActivityQuiz({ activity, onComplete }) {
           <button
             onClick={handleCheck}
             disabled={!canCheck}
-            className="flex-1 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="flex-1 py-3.5 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             Проверить ответы
           </button>
         ) : !allCorrect ? (
           <button
             onClick={handleRetry}
-            className="flex-1 py-3.5 rounded-xl border-2 border-indigo-300 text-indigo-700 font-semibold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 rounded-xl border-2 border-brand-light text-brand-dark font-semibold hover:bg-brand-soft transition-colors flex items-center justify-center gap-2"
           >
             <Icon name="refresh" className="text-[20px]" /> Попробовать снова
           </button>

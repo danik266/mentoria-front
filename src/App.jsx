@@ -4,6 +4,7 @@ import { useAuth } from './contexts/AuthContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import DashboardLayout from './components/DashboardLayout'
+import SiteBackground from './components/SiteBackground'
 
 import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
@@ -46,6 +47,7 @@ export default function App() {
 
   return (
     <div className={`${!isAppRoute ? 'min-h-screen flex flex-col' : ''}`}>
+      <SiteBackground />
       <ScrollToTop />
       {!bare && <Navbar />}
       <main className={`${!bare ? 'flex-1 pt-16' : ''}`}>

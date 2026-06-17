@@ -13,6 +13,15 @@ const KEYS = {
   lessons: 'mh_lessons',
 }
 
+// Куда вести «гостя» по кнопкам входа в приложение:
+//  - залогинен      → в само приложение (appPath)
+//  - был аккаунт    → на /login
+//  - впервые здесь  → на /register
+export function getEntryPath(user, appPath) {
+  if (user) return appPath
+  return localStorage.getItem('mh_registered') ? '/login' : '/register'
+}
+
 function read(key, fallback) {
   try {
     const raw = localStorage.getItem(key)

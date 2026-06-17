@@ -1,106 +1,126 @@
 import { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Icon from './Icon'
-
-const links = []
+import Logo from './Logo'
+import LanguageSwitcher from './LanguageSwitcher'
+import ThemeToggle from './ThemeToggle'
+import { useLanguage } from '../contexts/LanguageContext'
+import { useAuth } from '../contexts/AuthContext'
+import { getEntryPath } from '../utils/storage'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  const { t } = useLanguage()
+  const { user } = useAuth()
 
-  const linkClass = ({ isActive }) =>
-    `px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-      isActive ? 'text-primary bg-sky-soft' : 'text-slate-600 hover:text-primary hover:bg-sky-soft'
-    }`
+  const go = (appPath) => navigate(getEntryPath(user, appPath))
+
+  const navItems = [
+    { label: t('nav.opportunities'), appPath: '/app/opportunities' },
+    { label: t('nav.courses'), appPath: '/app/courses' },
+  ]
 
   return (
-    <header className="fixed top-0 inset-x-0 z-40 bg-white/90 backdrop-blur border-b border-slate-100">
+    <header className="fixed top-0 inset-x-0 z-40 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center gap-4 h-16">
           {/* Логотип */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="w-9 h-9 rounded-xl bg-primary text-white grid place-items-center shadow-sm font-extrabold text-lg">
-              M
-            </span>
-            <span className="font-extrabold text-lg text-slate-800">
-              Mentoria <span className="text-primary">Hub</span>
-            </span>
-          </Link>
+          <Logo to="/" subtitle={t('brand.tagline')} />
 
-          {/* Десктоп-ссылки */}
-          <div className="hidden md:flex items-center gap-1">
-            {links.map((l) => (
-              <NavLink key={l.to} to={l.to} end={l.end} className={linkClass}>
-                {l.label}
-              </NavLink>
+          {/* Центр — ссылки */}
+          <div className="hidden lg:flex items-center gap-1 mx-auto">
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => go(item.appPath)}
+                className="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand hover:bg-brand-soft dark:hover:bg-slate-800 transition-colors"
+              >
+                {item.label}
+              </button>
             ))}
           </div>
 
-          {/* Десктоп-кнопки */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Право — действия */}
+          <div className="hidden lg:flex items-center gap-1.5 ml-auto lg:ml-0">
+            <ThemeToggle />
+            <LanguageSwitcher />
             <button
               onClick={() => navigate('/admin')}
-              className="px-4 py-2 text-sm font-semibold text-slate-500 hover:text-primary hover:bg-sky-soft rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-brand hover:bg-brand-soft dark:hover:bg-slate-800 rounded-full transition-colors"
             >
-              Панель управления
+              <Icon name="admin_panel_settings" className="text-[18px]" /> {t('nav.dashboard')}
             </button>
             <button
               onClick={() => navigate('/login')}
-              className="px-4 py-2 text-sm font-semibold text-primary hover:bg-sky-soft rounded-lg transition-colors"
+              className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-brand transition-colors"
             >
-              Войти
+              {t('nav.signin')}
             </button>
             <button
               onClick={() => navigate('/register')}
-              className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-dark rounded-full shadow-sm transition-all hover:-translate-y-0.5"
             >
-              Регистрация
+              {t('nav.findPrograms')} <Icon name="arrow_forward" className="text-[18px]" />
             </button>
           </div>
 
-          {/* Бургер */}
-          <button
-            className="md:hidden p-2 text-slate-600"
-            onClick={() => setOpen((o) => !o)}
-            aria-label="Меню"
-          >
-            <Icon name={open ? 'close' : 'menu'} className="text-[26px]" />
-          </button>
+          {/* Планшет/мобайл: тема + язык + бургер */}
+          <div className="flex lg:hidden items-center gap-1 ml-auto">
+            <ThemeToggle />
+            <LanguageSwitcher />
+            <button
+              className="p-2 text-slate-600 dark:text-slate-300"
+              onClick={() => setOpen((o) => !o)}
+              aria-label={t('nav.menu')}
+            >
+              <Icon name={open ? 'close' : 'menu'} className="text-[26px]" />
+            </button>
+          </div>
         </div>
       </nav>
 
       {/* Мобильное меню */}
       {open && (
-        <div className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-1">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
-              onClick={() => setOpen(false)}
-              className={linkClass}
-              style={{ display: 'block' }}
+        <div className="lg:hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur px-4 py-3 space-y-1">
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => {
+                setOpen(false)
+                go(item.appPath)
+              }}
+              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-brand-soft dark:hover:bg-slate-800 hover:text-brand transition-colors"
             >
-              {l.label}
-            </NavLink>
+              {item.label}
+            </button>
           ))}
           <button
             onClick={() => {
               setOpen(false)
               navigate('/admin')
             }}
-            className="w-full mt-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors"
+            className="w-full mt-2 px-4 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           >
-            Панель управления
+            {t('nav.dashboard')}
+          </button>
+          <button
+            onClick={() => {
+              setOpen(false)
+              navigate('/login')
+            }}
+            className="w-full mt-2 px-4 py-2.5 text-sm font-semibold text-brand bg-brand-soft dark:bg-slate-800 rounded-lg hover:bg-brand/10 transition-colors"
+          >
+            {t('nav.signin')}
           </button>
           <button
             onClick={() => {
               setOpen(false)
               navigate('/register')
             }}
-            className="w-full mt-2 px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-dark transition-colors"
+            className="w-full mt-2 px-4 py-2.5 text-sm font-semibold text-white bg-brand rounded-lg hover:bg-brand-dark transition-colors"
           >
-            Регистрация
+            {t('nav.findPrograms')}
           </button>
         </div>
       )}

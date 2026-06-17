@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Icon from '../components/Icon'
+import Logo from '../components/Logo'
 import { categories, formats } from '../data/mock'
 import {
   getOpportunities,
@@ -227,75 +228,74 @@ export default function Admin() {
   // ---- Экран входа ----
   if (!authed) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-
-        <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
-          <span className="w-16 h-16 rounded-2xl bg-indigo-600 text-white grid place-items-center mx-auto mb-4 shadow-lg shadow-indigo-500/20 transform rotate-3">
-            <Icon name="admin_panel_settings" className="text-[36px]" filled />
+      <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+          <div className="flex justify-center mb-6">
+            <Logo to="/" size="lg" />
+          </div>
+          <span className="w-14 h-14 rounded-2xl bg-brand-soft text-brand grid place-items-center mx-auto mb-4">
+            <Icon name="admin_panel_settings" className="text-[32px]" filled />
           </span>
-          <h1 className="text-3xl font-extrabold text-white mb-2">Админ-панель</h1>
-          <p className="text-slate-400 text-sm mb-6">Введите ваши административные данные</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">Админ-панель</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Введите административные данные</p>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-          <div className="bg-slate-850/50 backdrop-blur-xl py-8 px-4 shadow-2xl sm:rounded-3xl sm:px-10 border border-slate-700/50 bg-slate-800/80">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur py-8 px-6 sm:px-10 shadow-xl shadow-slate-900/5 rounded-3xl border border-slate-100 dark:border-slate-800">
             <form className="space-y-5" onSubmit={login}>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Email администратора</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email администратора</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@mentoria.kz"
-                  className="block w-full px-4 py-3 border border-slate-600 rounded-xl bg-slate-700/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Пароль</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Пароль</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="block w-full px-4 py-3 border border-slate-600 rounded-xl bg-slate-700/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">Секретный код</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Секретный код</label>
                 <input
                   type="password"
                   required
                   value={adminCode}
                   onChange={(e) => setAdminCode(e.target.value)}
                   placeholder="admin123"
-                  className="block w-full px-4 py-3 border border-slate-600 rounded-xl bg-slate-700/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="input"
                 />
               </div>
 
               {errorText && (
-                <p className="text-sm text-red-400 font-semibold bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+                <p className="text-sm text-red-600 font-semibold bg-red-50 border border-red-100 p-3 rounded-xl">
                   {errorText}
                 </p>
               )}
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 text-white font-bold text-sm hover:from-indigo-500 hover:to-indigo-400 transition-all duration-300 shadow-lg shadow-indigo-500/20"
+                className="w-full py-3 rounded-xl bg-brand text-white font-bold text-sm hover:bg-brand-dark transition-all transform hover:-translate-y-0.5 shadow-sm"
               >
                 Войти в панель
               </button>
             </form>
 
-            <div className="mt-6 text-center border-t border-slate-700/30 pt-4">
-              <a href="/" className="text-sm text-slate-400 hover:text-slate-200 transition-colors font-medium">
-                ← Вернуться на главную
+            <div className="mt-6 text-center border-t border-slate-100 dark:border-slate-800 pt-4">
+              <a href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand transition-colors font-medium">
+                Вернуться на главную
               </a>
             </div>
           </div>
@@ -421,7 +421,7 @@ export default function Admin() {
                   key={c.id}
                   className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-4"
                 >
-                  <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient || 'from-indigo-500 to-violet-500'} grid place-items-center shrink-0`}>
+                  <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient || 'from-brand to-brand-light'} grid place-items-center shrink-0`}>
                     <Icon name={c.icon || 'menu_book'} className="text-white text-[24px]" filled />
                   </span>
                   <div className="flex-1 min-w-0">
@@ -464,7 +464,7 @@ export default function Admin() {
               {/* Стат-карточки */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
-                  <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl grid place-items-center mb-3">
+                  <div className="w-12 h-12 bg-brand-soft text-brand rounded-xl grid place-items-center mb-3">
                     <Icon name="groups" className="text-[24px]" />
                   </div>
                   <p className="text-3xl font-extrabold text-slate-800">{analytics.total_students}</p>
@@ -510,11 +510,11 @@ export default function Admin() {
                               <p className="text-xs text-slate-400">{s.email}</p>
                             </td>
                             <td className="px-4 py-3 text-slate-600">{s.grade} класс</td>
-                            <td className="px-4 py-3 font-medium text-indigo-600">{s.completed_lessons}</td>
+                            <td className="px-4 py-3 font-medium text-brand">{s.completed_lessons}</td>
                             <td className="px-4 py-3 text-right">
                               <button
                                 onClick={() => setStudentDetail(s)}
-                                className="px-3 py-1.5 rounded-lg bg-sky-soft text-primary font-semibold text-xs hover:bg-indigo-100 transition-colors"
+                                className="px-3 py-1.5 rounded-lg bg-sky-soft text-primary font-semibold text-xs hover:bg-brand-soft transition-colors"
                               >
                                 Прогресс
                               </button>
@@ -542,7 +542,7 @@ export default function Admin() {
                         {/* Небольшой прогресс-бар */}
                         <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"
+                            className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full"
                             style={{
                               width: `${c.started_students > 0 ? (c.completed_students / c.started_students) * 100 : 0}%`
                             }}
@@ -693,7 +693,7 @@ function CourseForm({ initial, onSave, onClose }) {
     description: initial.description || '',
     level: initial.level || 'Начальный',
     icon: initial.icon || 'menu_book',
-    gradient: initial.gradient || 'from-indigo-500 to-violet-500',
+    gradient: initial.gradient || 'from-brand to-brand-light',
     tags: initial.tags ? initial.tags.join(', ') : '',
   })
 
@@ -906,7 +906,7 @@ function CourseForm({ initial, onSave, onClose }) {
               <input
                 value={form.gradient}
                 onChange={(e) => set('gradient', e.target.value)}
-                placeholder="from-indigo-500 to-violet-500"
+                placeholder="from-brand to-brand-light"
                 className="input"
               />
             </Field>
@@ -985,7 +985,7 @@ function StudentDetailModal({ student, onClose, crs }) {
           <p className="text-xs text-slate-400">Выбранные интересы</p>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {student.interests.length > 0 ? student.interests.map(i => (
-              <span key={i} className="text-[10px] font-semibold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">{i}</span>
+              <span key={i} className="text-[10px] font-semibold bg-brand-soft text-brand px-2 py-0.5 rounded-full">{i}</span>
             )) : <span className="text-xs text-slate-400">Не выбраны</span>}
           </div>
         </div>

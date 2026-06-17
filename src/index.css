@@ -4,12 +4,9 @@
 
 @layer components {
   .input {
-    @apply w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/40;
+    @apply w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary/40
+           dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:placeholder-slate-500;
   }
-}
-
-:root {
-  color-scheme: light;
 }
 
 html {
@@ -19,9 +16,49 @@ html {
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f8fafc;
+  /* Прозрачный фон — за ним рисуется SiteBackground (гамма-волны) */
+  background-color: transparent;
   color: #1e293b;
   -webkit-font-smoothing: antialiased;
+  transition: color 0.2s ease;
+}
+
+html.dark body {
+  color: #e2e8f0;
+}
+
+/* Плавающие пятна авроры */
+@keyframes float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -40px) scale(1.08); }
+}
+@keyframes float-slower {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(1.1); }
+}
+.animate-float-slow { animation: float-slow 18s ease-in-out infinite; }
+.animate-float-slower { animation: float-slower 24s ease-in-out infinite; }
+
+/* Покачивание волн по горизонтали (края спрятаны за счёт ширины 150%) */
+@keyframes wave-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-9%); }
+}
+@keyframes wave-x2 {
+  0%, 100% { transform: translateX(-7%); }
+  50% { transform: translateX(3%); }
+}
+@keyframes wave-x3 {
+  0%, 100% { transform: translateX(-3%); }
+  50% { transform: translateX(6%); }
+}
+.animate-wave-slower { animation: wave-x 19s ease-in-out infinite; }
+.animate-wave-slow { animation: wave-x2 13s ease-in-out infinite; }
+.animate-wave-mid { animation: wave-x3 9s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow, .animate-float-slower,
+  .animate-wave-slow, .animate-wave-slower, .animate-wave-mid { animation: none; }
 }
 
 .material-symbols-rounded {

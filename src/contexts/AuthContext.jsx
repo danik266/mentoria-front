@@ -67,6 +67,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (newToken, userData) => {
     localStorage.setItem('token', newToken);
+    // Помечаем, что у пользователя уже есть аккаунт — чтобы кидать на /login, а не /register
+    localStorage.setItem('mh_registered', '1');
     setToken(newToken);
     setUser(userData);
   };

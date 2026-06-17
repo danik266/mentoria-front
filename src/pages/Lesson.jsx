@@ -67,7 +67,7 @@ export default function Lesson() {
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
         <p className="text-slate-500 mb-4">Урок не найден или недоступен</p>
-        <Link to={`/app/courses/${id}`} className="text-indigo-600 font-semibold hover:underline">
+        <Link to={`/app/courses/${id}`} className="text-brand font-semibold hover:underline">
           ← Вернуться к курсу
         </Link>
       </div>
@@ -100,8 +100,8 @@ export default function Lesson() {
   const currentActivity = activities[step]
 
   const colorMap = {
-    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-200',
-    purple: 'bg-purple-50 text-purple-600 border-purple-200',
+    indigo: 'bg-brand-soft text-brand border-brand-soft',
+    purple: 'bg-brand-soft text-brand-dark border-purple-200',
     amber:  'bg-amber-50 text-amber-600 border-amber-200',
     rose:   'bg-rose-50 text-rose-600 border-rose-200',
     blue:   'bg-blue-50 text-blue-600 border-blue-200',
@@ -116,7 +116,7 @@ export default function Lesson() {
           {/* Back */}
           <Link
             to={`/app/courses/${id}`}
-            className="flex items-center gap-2 text-sm text-slate-500 hover:text-indigo-600 bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 transition-colors"
+            className="flex items-center gap-2 text-sm text-slate-500 hover:text-brand bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 transition-colors"
           >
             <Icon name="arrow_back" className="text-[18px]" /> {course.title}
           </Link>
@@ -136,7 +136,7 @@ export default function Lesson() {
                     to={`/app/courses/${id}/lesson/${l.id}`}
                     className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
                       active
-                        ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                        ? 'bg-brand-soft text-brand-dark font-semibold'
                         : 'text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -144,7 +144,7 @@ export default function Lesson() {
                       complete
                         ? 'bg-emerald-500 text-white'
                         : active
-                        ? 'bg-indigo-600 text-white'
+                        ? 'bg-brand text-white'
                         : 'bg-slate-100 text-slate-500'
                     }`}>
                       {complete ? <Icon name="check" className="text-[15px]" /> : i + 1}
@@ -173,14 +173,14 @@ export default function Lesson() {
                       onClick={() => (done || i <= step) && setStep(i)}
                       className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-left transition-all ${
                         current
-                          ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                          ? 'bg-brand-soft text-brand-dark font-semibold'
                           : done
                           ? 'text-emerald-600 hover:bg-emerald-50 cursor-pointer'
                           : 'text-slate-400 cursor-not-allowed'
                       }`}
                     >
                       <span className={`w-6 h-6 rounded-md grid place-items-center shrink-0 ${
-                        done ? 'bg-emerald-500 text-white' : current ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-300'
+                        done ? 'bg-emerald-500 text-white' : current ? 'bg-brand text-white' : 'bg-slate-100 text-slate-300'
                       }`}>
                         {done
                           ? <Icon name="check" className="text-[15px]" />
@@ -300,15 +300,15 @@ export default function Lesson() {
           {passed && (
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
               {isLast ? (
-                <div className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl p-6 text-center">
-                  <p className="text-3xl mb-1">🎉</p>
+                <div className="bg-gradient-to-br from-brand to-brand-dark text-white rounded-2xl p-6 text-center">
+                  <Icon name="celebration" className="text-[34px] mb-1" filled />
                   <p className="text-xl font-extrabold mb-1">Курс завершён!</p>
                   <p className="text-white/80 text-sm mb-5">
                     Ты прошёл все уроки курса «{course.title}»
                   </p>
                   <Link
                     to={`/certificate/${id}`}
-                    className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-indigo-700 font-bold hover:bg-indigo-50 transition-colors shadow-lg"
+                    className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-brand-dark font-bold hover:bg-brand-soft transition-colors shadow-lg"
                   >
                     <Icon name="workspace_premium" className="text-[22px]" filled /> Получить сертификат
                   </Link>
@@ -316,12 +316,12 @@ export default function Lesson() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-slate-800">Урок пройден! 🏆</p>
+                    <p className="font-semibold text-slate-800">Урок пройден!</p>
                     <p className="text-sm text-slate-400">Готов к следующему?</p>
                   </div>
                   <button
                     onClick={goNext}
-                    className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                    className="px-6 py-3 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark transition-colors flex items-center gap-2"
                   >
                     Следующий урок <Icon name="arrow_forward" className="text-[20px]" />
                   </button>

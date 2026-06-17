@@ -26,7 +26,7 @@ export default function ActivityVideo({ activity, onComplete }) {
 
       <button
         onClick={onComplete}
-        className="w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors mt-6 flex items-center justify-center gap-2"
+        className="w-full py-3.5 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark transition-colors mt-6 flex items-center justify-center gap-2"
       >
         <Icon name="check_circle" className="text-[22px]" /> Я посмотрел видео
       </button>

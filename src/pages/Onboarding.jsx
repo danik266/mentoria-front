@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
+import Logo from '../components/Logo'
 import { interestsList, goalsList } from '../data/mock'
 import { saveProfile } from '../utils/storage'
 
@@ -38,13 +39,8 @@ export default function Onboarding() {
     <div className="min-h-screen bg-gradient-to-b from-sky-soft to-white flex flex-col">
       {/* Шапка */}
       <div className="max-w-2xl w-full mx-auto px-4 pt-10">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <span className="w-9 h-9 rounded-xl bg-primary text-white grid place-items-center font-extrabold text-lg">
-            M
-          </span>
-          <span className="font-extrabold text-lg text-slate-800">
-            Mentoria <span className="text-primary">Hub</span>
-          </span>
+        <div className="flex items-center justify-center mb-8">
+          <Logo to={null} />
         </div>
 
         {/* Прогресс-бар */}

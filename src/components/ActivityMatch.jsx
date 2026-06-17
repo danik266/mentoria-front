@@ -70,7 +70,7 @@ export default function ActivityMatch({ activity, onComplete }) {
       </div>
 
       <div className="flex items-center justify-between text-sm text-slate-500">
-        <span>Совпадений: <strong className="text-indigo-600">{Object.keys(matched).length}</strong> из {activity.pairs.length}</span>
+        <span>Совпадений: <strong className="text-brand">{Object.keys(matched).length}</strong> из {activity.pairs.length}</span>
         {allMatched && <span className="text-emerald-600 font-semibold flex items-center gap-1"><Icon name="celebration" className="text-[18px]" filled /> Всё верно!</span>}
       </div>
 
@@ -93,8 +93,8 @@ export default function ActivityMatch({ activity, onComplete }) {
                     : isWrong
                     ? 'bg-red-50 border-red-300 text-red-700 animate-shake'
                     : isSelected
-                    ? 'bg-indigo-50 border-indigo-400 text-indigo-700 shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer'
+                    ? 'bg-brand-soft border-brand-light text-brand-dark shadow-md scale-[1.02]'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
                 }`}
               >
                 {isMatch && <Icon name="check_circle" className="text-[16px] text-emerald-500 inline mr-1.5" filled />}
@@ -122,8 +122,8 @@ export default function ActivityMatch({ activity, onComplete }) {
                     : isWrong
                     ? 'bg-red-50 border-red-300 text-red-700'
                     : isSelected
-                    ? 'bg-purple-50 border-purple-400 text-purple-700 shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-purple-300 hover:bg-purple-50/30 cursor-pointer'
+                    ? 'bg-brand-soft border-brand-light text-brand-dark shadow-md scale-[1.02]'
+                    : 'bg-white border-slate-200 text-slate-700 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
                 }`}
               >
                 {isMatch && <Icon name="check_circle" className="text-[16px] text-emerald-500 inline mr-1.5" filled />}

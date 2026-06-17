@@ -4,8 +4,8 @@ export default function ActivityRead({ activity, onComplete }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-2">
-        <span className="w-10 h-10 rounded-xl bg-indigo-50 grid place-items-center">
-          <Icon name="menu_book" className="text-[22px] text-indigo-500" filled />
+        <span className="w-10 h-10 rounded-xl bg-brand-soft grid place-items-center">
+          <Icon name="menu_book" className="text-[22px] text-brand" filled />
         </span>
         <div>
           <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
@@ -24,8 +24,8 @@ export default function ActivityRead({ activity, onComplete }) {
           }
           if (block.type === 'note') {
             return (
-              <div key={i} className="bg-indigo-50 border-l-4 border-indigo-400 rounded-r-xl p-4">
-                <p className="text-sm font-semibold text-indigo-700 mb-1 flex items-center gap-1.5">
+              <div key={i} className="bg-brand-soft border-l-4 border-brand-light rounded-r-xl p-4">
+                <p className="text-sm font-semibold text-brand-dark mb-1 flex items-center gap-1.5">
                   <Icon name="lightbulb" className="text-[18px]" filled /> Важно запомнить
                 </p>
                 <p className="text-slate-700 text-sm leading-relaxed">{block.text}</p>
@@ -48,7 +48,7 @@ export default function ActivityRead({ activity, onComplete }) {
                 <ul className="space-y-2">
                   {block.items.map((item, j) => (
                     <li key={j} className="flex items-start gap-2.5 text-slate-700 text-sm">
-                      <span className="w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 grid place-items-center text-xs font-bold shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-full bg-brand-soft text-brand grid place-items-center text-xs font-bold shrink-0 mt-0.5">
                         {j + 1}
                       </span>
                       {item}
@@ -74,7 +74,7 @@ export default function ActivityRead({ activity, onComplete }) {
 
       <button
         onClick={onComplete}
-        className="mt-4 w-full py-3.5 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+        className="mt-4 w-full py-3.5 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark transition-colors flex items-center justify-center gap-2"
       >
         Прочитал, продолжить <Icon name="arrow_forward" className="text-[20px]" />
       </button>

@@ -57,15 +57,15 @@ export default function DashboardHome() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome banner */}
-      <div className="relative bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 text-white rounded-3xl p-6 sm:p-8 mb-8 overflow-hidden">
+      <div className="relative bg-gradient-to-r from-brand via-brand to-brand-dark text-white rounded-3xl p-6 sm:p-8 mb-8 overflow-hidden">
         <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-2xl" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-brand-light/10 rounded-full blur-3xl" />
         <div className="relative">
-          <p className="text-indigo-200 text-sm font-medium mb-1">Личный кабинет</p>
+          <p className="text-brand-soft text-sm font-medium mb-1">Личный кабинет</p>
           <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">
-            Привет, {displayName}! 👋
+            Привет, {displayName}!
           </h1>
-          <p className="text-indigo-100 text-sm sm:text-base max-w-lg">
+          <p className="text-brand-soft text-sm sm:text-base max-w-lg">
             {profile
               ? `${profile.grade} класс · ${(profile.interests || []).join(', ') || 'интересы не выбраны'}`
               : 'Заполни профиль, чтобы получить персональные рекомендации'}
@@ -73,7 +73,7 @@ export default function DashboardHome() {
           {!profile && (
             <Link
               to="/onboarding"
-              className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-white text-indigo-600 font-semibold text-sm hover:bg-indigo-50 transition-colors shadow-lg shadow-indigo-500/20"
+              className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-white text-brand font-semibold text-sm hover:bg-brand-soft transition-colors shadow-lg shadow-brand/20"
             >
               <Icon name="person_add" className="text-[20px]" /> Создать профиль
             </Link>
@@ -99,7 +99,7 @@ export default function DashboardHome() {
               <div key={c.id} className="relative group h-full">
                 <Link
                   to={`/app/courses/${c.id}`}
-                  className="block h-full bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-indigo-100 transition-all duration-300"
+                  className="block h-full bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
                 >
                   <div className="flex items-center gap-3 mb-4 pr-6">
                     <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} grid place-items-center shadow-md group-hover:scale-105 transition-transform overflow-hidden shrink-0`}>
@@ -118,10 +118,10 @@ export default function DashboardHome() {
                   </div>
                   <div className="flex justify-between text-xs text-slate-500 mb-1.5 mt-auto">
                     <span>Прогресс</span>
-                    <span className="font-semibold text-indigo-600">{c.pct}%</span>
+                    <span className="font-semibold text-brand">{c.pct}%</span>
                   </div>
                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500" style={{ width: `${c.pct}%` }} />
+                    <div className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-500" style={{ width: `${c.pct}%` }} />
                   </div>
                 </Link>
                 
@@ -188,7 +188,7 @@ export default function DashboardHome() {
               <Link
                 key={o.id}
                 to="/app/opportunities"
-                className="group bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-indigo-100 transition-all duration-300"
+                className="group bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
@@ -198,7 +198,7 @@ export default function DashboardHome() {
                   >
                     {o.category}
                   </span>
-                  <Icon name="auto_awesome" className="text-[18px] text-indigo-500 group-hover:rotate-12 transition-transform" filled />
+                  <Icon name="auto_awesome" className="text-[18px] text-brand group-hover:rotate-12 transition-transform" filled />
                 </div>
                 <h4 className="font-bold text-slate-800 mb-2">{o.title}</h4>
                 <p className="text-sm text-slate-600 line-clamp-2 mb-3">{o.description}</p>
@@ -216,10 +216,10 @@ export default function DashboardHome() {
 
 function StatCard({ icon, label, value, color }) {
   const colorMap = {
-    indigo: 'bg-indigo-50 text-indigo-600',
+    indigo: 'bg-brand-soft text-brand',
     amber: 'bg-amber-50 text-amber-600',
     emerald: 'bg-emerald-50 text-emerald-600',
-    purple: 'bg-purple-50 text-purple-600',
+    purple: 'bg-brand-soft text-brand-dark',
   }
   const iconBg = colorMap[color] || colorMap.indigo
 
@@ -239,7 +239,7 @@ function Section({ title, icon, subtitle, children }) {
     <section className="mb-8">
       <div className="mb-4">
         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-          <Icon name={icon} className="text-[24px] text-indigo-500" filled /> {title}
+          <Icon name={icon} className="text-[24px] text-brand" filled /> {title}
         </h2>
         {subtitle && <p className="text-sm text-slate-500 mt-1">{subtitle}</p>}
       </div>
@@ -252,7 +252,7 @@ function Empty({ text, link, linkText }) {
   return (
     <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center">
       <p className="text-slate-500 mb-3">{text}</p>
-      <Link to={link} className="text-indigo-600 font-semibold hover:underline">
+      <Link to={link} className="text-brand font-semibold hover:underline">
         {linkText} →
       </Link>
     </div>

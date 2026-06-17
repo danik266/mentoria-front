@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Icon from '../components/Icon'
+import Logo from '../components/Logo'
 import { getCourses, getProfile, formatDate } from '../utils/storage'
 
 export default function Certificate() {
@@ -33,13 +34,8 @@ export default function Certificate() {
         <div className="border-4 border-primary rounded-sm p-2">
           <div className="border border-primary/30 rounded-sm px-6 sm:px-14 py-12 sm:py-16 text-center relative overflow-hidden">
             {/* Логотип */}
-            <div className="flex items-center justify-center gap-2 mb-8">
-              <span className="w-11 h-11 rounded-xl bg-primary text-white grid place-items-center font-extrabold text-2xl">
-                M
-              </span>
-              <span className="font-extrabold text-2xl text-slate-800">
-                Mentoria <span className="text-primary">Hub</span>
-              </span>
+            <div className="flex items-center justify-center mb-8">
+              <Logo to={null} size="lg" />
             </div>
 
             <div className="w-16 h-px bg-primary/40 mx-auto mb-6" />
