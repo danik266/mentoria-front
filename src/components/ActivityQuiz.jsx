@@ -30,26 +30,26 @@ export default function ActivityQuiz({ activity, onComplete }) {
           <Icon name="quiz" className="text-[22px] text-rose-500" filled />
         </span>
         <div>
-          <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
-          <p className="text-sm text-slate-400">Ответь на все вопросы чтобы пройти этот блок</p>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">{activity.title}</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Ответь на все вопросы чтобы пройти этот блок</p>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-500"
           style={{ width: `${(Object.keys(answers).length / total) * 100}%` }}
         />
       </div>
-      <p className="text-xs text-slate-400 text-right -mt-4">
+      <p className="text-xs text-slate-400 dark:text-slate-500 text-right -mt-4">
         {Object.keys(answers).length} из {total} ответов
       </p>
 
       <div className="space-y-8">
         {activity.questions.map((q, qi) => (
-          <div key={`${retry}-${qi}`} className="bg-slate-50 rounded-2xl p-5">
-            <p className="font-semibold text-slate-800 mb-4 flex items-start gap-2">
+          <div key={`${retry}-${qi}`} className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-5">
+            <p className="font-semibold text-slate-800 dark:text-white mb-4 flex items-start gap-2">
               <span className="w-7 h-7 rounded-lg bg-brand-soft text-brand-dark text-sm font-bold grid place-items-center shrink-0 mt-0.5">
                 {qi + 1}
               </span>
@@ -59,11 +59,11 @@ export default function ActivityQuiz({ activity, onComplete }) {
               {q.options.map((opt, oi) => {
                 const selected = answers[qi] === oi
                 const isCorrect = oi === q.correct
-                let cls = 'border-slate-200 bg-white hover:border-brand-light hover:bg-brand-soft/40 cursor-pointer'
+                let cls = 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-light hover:bg-brand-soft/40 cursor-pointer'
                 if (checked) {
                   if (isCorrect) cls = 'border-emerald-400 bg-emerald-50'
                   else if (selected) cls = 'border-red-400 bg-red-50'
-                  else cls = 'border-slate-200 bg-white opacity-50'
+                  else cls = 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 opacity-50'
                 } else if (selected) {
                   cls = 'border-brand-light bg-brand-soft shadow-sm'
                 }
@@ -80,7 +80,7 @@ export default function ActivityQuiz({ activity, onComplete }) {
                       onChange={() => !checked && setAnswers(a => ({ ...a, [qi]: oi }))}
                       className="accent-brand w-4 h-4 shrink-0"
                     />
-                    <span className="text-slate-700 text-sm flex-1">{opt}</span>
+                    <span className="text-slate-700 dark:text-slate-200 text-sm flex-1">{opt}</span>
                     {checked && isCorrect && <Icon name="check_circle" className="text-[20px] text-emerald-500 shrink-0" filled />}
                     {checked && selected && !isCorrect && <Icon name="cancel" className="text-[20px] text-red-500 shrink-0" filled />}
                   </label>

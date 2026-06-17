@@ -66,7 +66,7 @@ export default function Lesson() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
-        <p className="text-slate-500 mb-4">Урок не найден или недоступен</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">Урок не найден или недоступен</p>
         <Link to={`/app/courses/${id}`} className="text-brand font-semibold hover:underline">
           ← Вернуться к курсу
         </Link>
@@ -100,11 +100,11 @@ export default function Lesson() {
   const currentActivity = activities[step]
 
   const colorMap = {
-    indigo: 'bg-brand-soft text-brand border-brand-soft',
-    purple: 'bg-brand-soft text-brand-dark border-purple-200',
+    indigo: 'bg-brand-soft text-brand border-brand/20',
+    purple: 'bg-brand-soft text-brand-dark border-brand/20',
     amber:  'bg-amber-50 text-amber-600 border-amber-200',
     rose:   'bg-rose-50 text-rose-600 border-rose-200',
-    blue:   'bg-blue-50 text-blue-600 border-blue-200',
+    blue:   'bg-sky-50 text-sky-600 border-sky-200',
   }
 
   return (
@@ -116,14 +116,14 @@ export default function Lesson() {
           {/* Back */}
           <Link
             to={`/app/courses/${id}`}
-            className="flex items-center gap-2 text-sm text-slate-500 hover:text-brand bg-white rounded-xl border border-slate-100 shadow-sm px-4 py-3 transition-colors"
+            className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-brand bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm px-4 py-3 transition-colors"
           >
             <Icon name="arrow_back" className="text-[18px]" /> {course.title}
           </Link>
 
           {/* Lesson list */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3 px-1">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4">
+            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3 px-1">
               Уроки курса
             </p>
             <nav className="space-y-1">
@@ -137,7 +137,7 @@ export default function Lesson() {
                     className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors ${
                       active
                         ? 'bg-brand-soft text-brand-dark font-semibold'
-                        : 'text-slate-600 hover:bg-slate-50'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50'
                     }`}
                   >
                     <span className={`w-6 h-6 rounded-md grid place-items-center text-xs shrink-0 font-bold ${
@@ -145,7 +145,7 @@ export default function Lesson() {
                         ? 'bg-emerald-500 text-white'
                         : active
                         ? 'bg-brand text-white'
-                        : 'bg-slate-100 text-slate-500'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
                     }`}>
                       {complete ? <Icon name="check" className="text-[15px]" /> : i + 1}
                     </span>
@@ -158,8 +158,8 @@ export default function Lesson() {
 
           {/* Activity steps */}
           {activities.length > 0 && (
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4">
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3 px-1">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4">
+              <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3 px-1">
                 Шаги урока
               </p>
               <div className="space-y-1">
@@ -176,11 +176,11 @@ export default function Lesson() {
                           ? 'bg-brand-soft text-brand-dark font-semibold'
                           : done
                           ? 'text-emerald-600 hover:bg-emerald-50 cursor-pointer'
-                          : 'text-slate-400 cursor-not-allowed'
+                          : 'text-slate-400 dark:text-slate-500 cursor-not-allowed'
                       }`}
                     >
                       <span className={`w-6 h-6 rounded-md grid place-items-center shrink-0 ${
-                        done ? 'bg-emerald-500 text-white' : current ? 'bg-brand text-white' : 'bg-slate-100 text-slate-300'
+                        done ? 'bg-emerald-500 text-white' : current ? 'bg-brand text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-300'
                       }`}>
                         {done
                           ? <Icon name="check" className="text-[15px]" />
@@ -199,9 +199,9 @@ export default function Lesson() {
         {/* Main content */}
         <article className="min-w-0">
           {/* Header */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mb-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-400 dark:text-slate-500">
                 Урок {lessonIndex + 1} из {courseLessons.length}
               </p>
               {passed && (
@@ -210,7 +210,7 @@ export default function Lesson() {
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-4">{lesson.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white mb-4">{lesson.title}</h1>
 
             {/* Activity step pills */}
             {activities.length > 0 && (
@@ -229,7 +229,7 @@ export default function Lesson() {
                           ? colorMap[col] + ' shadow-sm scale-105'
                           : done
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                          : 'bg-slate-50 dark:bg-slate-800/60 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-700 cursor-not-allowed'
                       }`}
                     >
                       <Icon name={done ? 'check' : meta.icon} className="text-[14px]" filled={done} />
@@ -242,7 +242,7 @@ export default function Lesson() {
           </div>
 
           {/* Activity panel */}
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sm:p-8 mb-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 sm:p-8 mb-6">
             {currentActivity?.type === 'read' && (
               <ActivityRead
                 activity={currentActivity}
@@ -282,7 +282,7 @@ export default function Lesson() {
               <div>
                 <div className="space-y-4 mb-8">
                   {lesson.content.map((p, i) => (
-                    <p key={i} className="text-slate-700 leading-relaxed">{p}</p>
+                    <p key={i} className="text-slate-700 dark:text-slate-200 leading-relaxed">{p}</p>
                   ))}
                 </div>
                 {/* Old quiz fallback */}
@@ -298,7 +298,7 @@ export default function Lesson() {
 
           {/* Passed + navigation */}
           {passed && (
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
               {isLast ? (
                 <div className="bg-gradient-to-br from-brand to-brand-dark text-white rounded-2xl p-6 text-center">
                   <Icon name="celebration" className="text-[34px] mb-1" filled />
@@ -308,7 +308,7 @@ export default function Lesson() {
                   </p>
                   <Link
                     to={`/certificate/${id}`}
-                    className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-brand-dark font-bold hover:bg-brand-soft transition-colors shadow-lg"
+                    className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white dark:bg-slate-900 text-brand-dark font-bold hover:bg-brand-soft transition-colors shadow-lg"
                   >
                     <Icon name="workspace_premium" className="text-[22px]" filled /> Получить сертификат
                   </Link>
@@ -316,8 +316,8 @@ export default function Lesson() {
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-slate-800">Урок пройден!</p>
-                    <p className="text-sm text-slate-400">Готов к следующему?</p>
+                    <p className="font-semibold text-slate-800 dark:text-white">Урок пройден!</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500">Готов к следующему?</p>
                   </div>
                   <button
                     onClick={goNext}

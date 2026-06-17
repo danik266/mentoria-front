@@ -26,11 +26,11 @@ function FlashCard({ card, index, total }) {
 
         {/* Back */}
         <div
-          className="absolute inset-0 bg-white rounded-2xl shadow-lg border-2 border-brand-soft flex flex-col items-center justify-center p-6"
+          className="absolute inset-0 bg-white dark:bg-slate-900 rounded-2xl shadow-lg border-2 border-brand-soft flex flex-col items-center justify-center p-6"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-brand-light mb-3">Ответ</p>
-          <p className="text-lg text-slate-800 text-center leading-relaxed">{card.back}</p>
+          <p className="text-lg text-slate-800 dark:text-white text-center leading-relaxed">{card.back}</p>
         </div>
       </div>
     </div>
@@ -62,8 +62,8 @@ export default function ActivityFlashcards({ activity, onComplete }) {
           <Icon name="style" className="text-[22px] text-brand-light" filled />
         </span>
         <div>
-          <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
-          <p className="text-sm text-slate-400">Нажимай на карточку, чтобы увидеть ответ</p>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">{activity.title}</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Нажимай на карточку, чтобы увидеть ответ</p>
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export default function ActivityFlashcards({ activity, onComplete }) {
                 ? 'bg-brand text-white shadow-md scale-110'
                 : seen.has(i)
                 ? 'bg-emerald-100 text-emerald-700'
-                : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:bg-slate-200'
             }`}
           >
             {seen.has(i) ? <Icon name="check" className="text-[16px] mx-auto" /> : i + 1}
@@ -92,7 +92,7 @@ export default function ActivityFlashcards({ activity, onComplete }) {
         <button
           onClick={handlePrev}
           disabled={current === 0}
-          className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+          className="flex-1 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
         >
           <Icon name="arrow_back" className="text-[20px]" /> Назад
         </button>

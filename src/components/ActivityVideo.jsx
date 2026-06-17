@@ -8,12 +8,12 @@ export default function ActivityVideo({ activity, onComplete }) {
           <Icon name="play_circle" className="text-[22px] text-blue-500" filled />
         </span>
         <div>
-          <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
-          <p className="text-sm text-slate-400">Посмотри видеоурок для продолжения</p>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">{activity.title}</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Посмотри видеоурок для продолжения</p>
         </div>
       </div>
 
-      <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-slate-100 bg-slate-900">
+      <div className="w-full aspect-video rounded-2xl overflow-hidden shadow-lg border border-slate-100 dark:border-slate-800 bg-slate-900">
         <iframe
           src={activity.url}
           title="YouTube video player"

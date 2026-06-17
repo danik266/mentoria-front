@@ -64,12 +64,12 @@ export default function ActivityMatch({ activity, onComplete }) {
           <Icon name="link" className="text-[22px] text-amber-500" filled />
         </span>
         <div>
-          <h2 className="text-xl font-bold text-slate-800">{activity.title}</h2>
-          <p className="text-sm text-slate-400">Выбери термин слева, затем его определение справа</p>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white">{activity.title}</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500">Выбери термин слева, затем его определение справа</p>
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-slate-500">
+      <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">
         <span>Совпадений: <strong className="text-brand">{Object.keys(matched).length}</strong> из {activity.pairs.length}</span>
         {allMatched && <span className="text-emerald-600 font-semibold flex items-center gap-1"><Icon name="celebration" className="text-[18px]" filled /> Всё верно!</span>}
       </div>
@@ -77,7 +77,7 @@ export default function ActivityMatch({ activity, onComplete }) {
       <div className="grid grid-cols-2 gap-3">
         {/* Terms column */}
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide text-center mb-3">Термины</p>
+          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide text-center mb-3">Термины</p>
           {terms.map((item) => {
             const isMatch = isTermMatched(item.origIndex)
             const isSelected = selected?.side === 'term' && selected?.origIndex === item.origIndex
@@ -94,7 +94,7 @@ export default function ActivityMatch({ activity, onComplete }) {
                     ? 'bg-red-50 border-red-300 text-red-700 animate-shake'
                     : isSelected
                     ? 'bg-brand-soft border-brand-light text-brand-dark shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
                 }`}
               >
                 {isMatch && <Icon name="check_circle" className="text-[16px] text-emerald-500 inline mr-1.5" filled />}
@@ -106,7 +106,7 @@ export default function ActivityMatch({ activity, onComplete }) {
 
         {/* Definitions column */}
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide text-center mb-3">Определения</p>
+          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide text-center mb-3">Определения</p>
           {defs.map((item) => {
             const isMatch = isDefMatched(item.origIndex)
             const isSelected = selected?.side === 'def' && selected?.origIndex === item.origIndex
@@ -123,7 +123,7 @@ export default function ActivityMatch({ activity, onComplete }) {
                     ? 'bg-red-50 border-red-300 text-red-700'
                     : isSelected
                     ? 'bg-brand-soft border-brand-light text-brand-dark shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200 text-slate-700 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-brand-light hover:bg-brand-soft/30 cursor-pointer'
                 }`}
               >
                 {isMatch && <Icon name="check_circle" className="text-[16px] text-emerald-500 inline mr-1.5" filled />}

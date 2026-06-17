@@ -31,12 +31,12 @@ export default function Profile() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-slate-800">Настройки профиля</h1>
-        <p className="text-slate-500 text-sm mt-1">Обновите ваши данные и предпочтения</p>
+        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-white">Настройки профиля</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Обновите ваши данные и предпочтения</p>
       </div>
 
       {/* Avatar & Account info */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-light to-brand-light grid place-items-center text-white text-2xl font-bold shadow-lg shadow-brand/20">
             {(name || user?.email || '?')
@@ -47,8 +47,8 @@ export default function Profile() {
               .slice(0, 2)}
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-800">{name || 'Без имени'}</h2>
-            <p className="text-sm text-slate-400">{user?.email || 'email не указан'}</p>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{name || 'Без имени'}</h2>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{user?.email || 'email не указан'}</p>
             <div className="flex items-center gap-1.5 mt-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               <span className="text-xs text-emerald-600 font-medium">Аккаунт активен</span>
@@ -58,28 +58,28 @@ export default function Profile() {
       </div>
 
       {/* Personal info */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
-        <h3 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
+        <h3 className="font-bold text-slate-800 dark:text-white text-base mb-4 flex items-center gap-2">
           <Icon name="badge" className="text-[22px] text-brand" filled />
           Личные данные
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Имя</label>
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Имя</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ваше имя"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5">Класс</label>
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Класс</label>
             <select
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
             >
               {[8, 9, 10, 11].map((g) => (
                 <option key={g} value={g}>
@@ -92,12 +92,12 @@ export default function Profile() {
       </div>
 
       {/* Interests */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
-        <h3 className="font-bold text-slate-800 text-base mb-1 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
+        <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
           <Icon name="interests" className="text-[22px] text-brand" filled />
           Интересы
         </h3>
-        <p className="text-xs text-slate-400 mb-4">Выберите области, которые вам интересны</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Выберите области, которые вам интересны</p>
         <div className="flex flex-wrap gap-2">
           {interestsList.map((item) => {
             const active = interests.includes(item)
@@ -108,7 +108,7 @@ export default function Profile() {
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
                     ? 'bg-brand text-white shadow-md shadow-brand/20 scale-[1.02]'
-                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-brand-soft hover:bg-brand-soft'
+                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-soft hover:bg-brand-soft'
                 }`}
               >
                 {item}
@@ -119,12 +119,12 @@ export default function Profile() {
       </div>
 
       {/* Goals */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6">
-        <h3 className="font-bold text-slate-800 text-base mb-1 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
+        <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
           <Icon name="flag" className="text-[22px] text-brand" filled />
           Цели
         </h3>
-        <p className="text-xs text-slate-400 mb-4">Что вы хотите достичь?</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Что вы хотите достичь?</p>
         <div className="flex flex-wrap gap-2">
           {goalsList.map((item) => {
             const active = goals.includes(item)
@@ -135,7 +135,7 @@ export default function Profile() {
                 className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 scale-[1.02]'
-                    : 'bg-slate-50 text-slate-600 border border-slate-200 hover:border-emerald-200 hover:bg-emerald-50'
+                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-200 hover:bg-emerald-50'
                 }`}
               >
                 {item}
@@ -174,7 +174,7 @@ export default function Profile() {
               logout()
             }
           }}
-          className="px-6 py-2.5 rounded-xl border border-red-200 bg-white text-red-600 font-semibold text-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200"
+          className="px-6 py-2.5 rounded-xl border border-red-200 bg-white dark:bg-slate-900 text-red-600 font-semibold text-sm hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-200"
         >
           Выйти из аккаунта
         </button>

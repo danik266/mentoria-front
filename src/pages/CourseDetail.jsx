@@ -14,7 +14,7 @@ export default function CourseDetail() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
-        <p className="text-slate-500 mb-4">Курс не найден</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">Курс не найден</p>
         <Link to="/app/courses" className="text-primary font-semibold hover:underline">
           ← К списку курсов
         </Link>
@@ -43,7 +43,7 @@ export default function CourseDetail() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <Link
         to="/app/courses"
-        className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-primary mb-6"
+        className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-primary mb-6"
       >
         <Icon name="arrow_back" className="text-[18px]" /> К курсам
       </Link>
@@ -80,13 +80,13 @@ export default function CourseDetail() {
             <span className="font-semibold">{pct}%</span>
           </div>
           <div className="h-2.5 bg-white/30 rounded-full overflow-hidden">
-            <div className="h-full bg-white rounded-full transition-all" style={{ width: `${pct}%` }} />
+            <div className="h-full bg-white dark:bg-slate-900 rounded-full transition-all" style={{ width: `${pct}%` }} />
           </div>
         </div>
       </div>
 
       {/* Список уроков */}
-      <h2 className="text-xl font-bold text-slate-800 mb-4">Программа курса</h2>
+      <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Программа курса</h2>
       <div className="space-y-3 mb-8">
         {courseLessons.map((lesson, index) => {
           const status = statusOf(lesson, index)
@@ -103,8 +103,8 @@ export default function CourseDetail() {
               }}
               className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border transition-all ${
                 clickable
-                  ? 'bg-white border-slate-100 shadow-sm hover:border-primary hover:shadow-md cursor-pointer'
-                  : 'bg-slate-50 border-slate-100 opacity-70 cursor-not-allowed'
+                  ? 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 shadow-sm hover:border-primary hover:shadow-md cursor-pointer'
+                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-100 dark:border-slate-800 opacity-70 cursor-not-allowed'
               }`}
             >
               <span
@@ -113,7 +113,7 @@ export default function CourseDetail() {
                     ? 'bg-accent text-white'
                     : status === 'current'
                     ? 'bg-primary text-white'
-                    : 'bg-slate-200 text-slate-400'
+                    : 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500'
                 }`}
               >
                 {status === 'done' ? (
@@ -125,10 +125,10 @@ export default function CourseDetail() {
                 )}
               </span>
               <div className="flex-1">
-                <p className="font-semibold text-slate-800">
+                <p className="font-semibold text-slate-800 dark:text-white">
                   Урок {index + 1}. {lesson.title}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-400 dark:text-slate-500">
                   {status === 'done'
                     ? 'Пройден'
                     : status === 'current'

@@ -137,7 +137,7 @@ export const courses = [
       'Фундаментальный курс для уверенного старта: числа, выражения, уравнения и геометрия простыми словами.',
     level: 'Начальный',
     icon: 'functions',
-    gradient: 'from-indigo-500 to-violet-500',
+    gradient: 'from-teal-500 to-emerald-600',
     cover: '/courses/1.png',
     tags: ['Математика', 'STEM'],
     lessonsCount: 4,
@@ -546,8 +546,8 @@ export const goalsList = [
 
 // Цвета бейджей категорий
 export const categoryColors = {
-  Олимпиада: 'bg-indigo-100 text-indigo-700',
-  Хакатон: 'bg-purple-100 text-purple-700',
+  Олимпиада: 'bg-teal-100 text-teal-700',
+  Хакатон: 'bg-cyan-100 text-cyan-700',
   Стипендия: 'bg-emerald-100 text-emerald-700',
   'Летняя школа': 'bg-amber-100 text-amber-700',
   Стажировка: 'bg-sky-100 text-sky-700',

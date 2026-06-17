@@ -73,7 +73,7 @@ export default function DashboardHome() {
           {!profile && (
             <Link
               to="/onboarding"
-              className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-white text-brand font-semibold text-sm hover:bg-brand-soft transition-colors shadow-lg shadow-brand/20"
+              className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-brand font-semibold text-sm hover:bg-brand-soft transition-colors shadow-lg shadow-brand/20"
             >
               <Icon name="person_add" className="text-[20px]" /> Создать профиль
             </Link>
@@ -99,7 +99,7 @@ export default function DashboardHome() {
               <div key={c.id} className="relative group h-full">
                 <Link
                   to={`/app/courses/${c.id}`}
-                  className="block h-full bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
+                  className="block h-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
                 >
                   <div className="flex items-center gap-3 mb-4 pr-6">
                     <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient} grid place-items-center shadow-md group-hover:scale-105 transition-transform overflow-hidden shrink-0`}>
@@ -110,17 +110,17 @@ export default function DashboardHome() {
                       )}
                     </span>
                     <div>
-                      <p className="font-bold text-slate-800 line-clamp-2 leading-tight">{c.title}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="font-bold text-slate-800 dark:text-white line-clamp-2 leading-tight">{c.title}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                         {c.done} из {c.total} уроков
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-between text-xs text-slate-500 mb-1.5 mt-auto">
+                  <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5 mt-auto">
                     <span>Прогресс</span>
                     <span className="font-semibold text-brand">{c.pct}%</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full transition-all duration-500" style={{ width: `${c.pct}%` }} />
                   </div>
                 </Link>
@@ -150,15 +150,15 @@ export default function DashboardHome() {
         {upcoming.length === 0 ? (
           <Empty text="Нет предстоящих дедлайнов" link="/app/opportunities" linkText="Открыть каталог" />
         ) : (
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm divide-y divide-slate-50">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm divide-y divide-slate-50">
             {upcoming.map((o) => {
               const days = daysUntil(o.deadline)
               return (
                 <div key={o.id} className="flex items-center gap-4 p-4 hover:bg-slate-50/50 transition-colors">
                   <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${urgencyDot(days)}`} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 truncate">{o.title}</p>
-                    <p className="text-xs text-slate-400">{o.category}</p>
+                    <p className="font-semibold text-slate-800 dark:text-white truncate">{o.title}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{o.category}</p>
                   </div>
                   <div className={`text-right text-sm font-semibold ${urgencyColor(days)}`}>
                     <p>{formatDate(o.deadline)}</p>
@@ -188,20 +188,20 @@ export default function DashboardHome() {
               <Link
                 key={o.id}
                 to="/app/opportunities"
-                className="group bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
+                className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5 hover:shadow-lg hover:border-brand-soft transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
                     className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      categoryColors[o.category] || 'bg-slate-100 text-slate-700'
+                      categoryColors[o.category] || 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {o.category}
                   </span>
                   <Icon name="auto_awesome" className="text-[18px] text-brand group-hover:rotate-12 transition-transform" filled />
                 </div>
-                <h4 className="font-bold text-slate-800 mb-2">{o.title}</h4>
-                <p className="text-sm text-slate-600 line-clamp-2 mb-3">{o.description}</p>
+                <h4 className="font-bold text-slate-800 dark:text-white mb-2">{o.title}</h4>
+                <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-3">{o.description}</p>
                 <p className={`text-xs font-medium ${urgencyColor(days)}`}>
                   до {formatDate(o.deadline)}
                 </p>
@@ -224,12 +224,12 @@ function StatCard({ icon, label, value, color }) {
   const iconBg = colorMap[color] || colorMap.indigo
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow">
       <div className={`w-10 h-10 rounded-xl ${iconBg} grid place-items-center mb-3`}>
         <Icon name={icon} className="text-[22px]" filled />
       </div>
-      <p className="text-2xl font-extrabold text-slate-800">{value}</p>
-      <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+      <p className="text-2xl font-extrabold text-slate-800 dark:text-white">{value}</p>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{label}</p>
     </div>
   )
 }
@@ -238,10 +238,10 @@ function Section({ title, icon, subtitle, children }) {
   return (
     <section className="mb-8">
       <div className="mb-4">
-        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
           <Icon name={icon} className="text-[24px] text-brand" filled /> {title}
         </h2>
-        {subtitle && <p className="text-sm text-slate-500 mt-1">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>}
       </div>
       {children}
     </section>
@@ -250,8 +250,8 @@ function Section({ title, icon, subtitle, children }) {
 
 function Empty({ text, link, linkText }) {
   return (
-    <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center">
-      <p className="text-slate-500 mb-3">{text}</p>
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-8 text-center">
+      <p className="text-slate-500 dark:text-slate-400 mb-3">{text}</p>
       <Link to={link} className="text-brand font-semibold hover:underline">
         {linkText} →
       </Link>

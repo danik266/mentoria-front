@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import Icon from '../components/Icon'
 import Logo from '../components/Logo'
+import LanguageSwitcher from '../components/LanguageSwitcher'
+import ThemeToggle from '../components/ThemeToggle'
+import { useLanguage } from '../contexts/LanguageContext'
 import { categories, formats } from '../data/mock'
 import {
   getOpportunities,
@@ -15,6 +18,7 @@ import {
 const PASSWORD = 'admin123'
 
 export default function Admin() {
+  const { t } = useLanguage()
   const [authed, setAuthed] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -229,6 +233,10 @@ export default function Admin() {
   if (!authed) {
     return (
       <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="absolute top-4 right-4 flex items-center gap-1">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
           <div className="flex justify-center mb-6">
             <Logo to="/" size="lg" />
@@ -236,15 +244,15 @@ export default function Admin() {
           <span className="w-14 h-14 rounded-2xl bg-brand-soft text-brand grid place-items-center mx-auto mb-4">
             <Icon name="admin_panel_settings" className="text-[32px]" filled />
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">Админ-панель</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">Введите административные данные</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{t('admin.title')}</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">{t('admin.login.subtitle')}</p>
         </div>
 
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur py-8 px-6 sm:px-10 shadow-xl shadow-slate-900/5 rounded-3xl border border-slate-100 dark:border-slate-800">
             <form className="space-y-5" onSubmit={login}>
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email администратора</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('admin.login.email')}</label>
                 <input
                   type="email"
                   required
@@ -256,7 +264,7 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Пароль</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('admin.login.password')}</label>
                 <input
                   type="password"
                   required
@@ -268,7 +276,7 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Секретный код</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('admin.login.code')}</label>
                 <input
                   type="password"
                   required
@@ -289,13 +297,13 @@ export default function Admin() {
                 type="submit"
                 className="w-full py-3 rounded-xl bg-brand text-white font-bold text-sm hover:bg-brand-dark transition-all transform hover:-translate-y-0.5 shadow-sm"
               >
-                Войти в панель
+                {t('admin.login.submit')}
               </button>
             </form>
 
             <div className="mt-6 text-center border-t border-slate-100 dark:border-slate-800 pt-4">
               <a href="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand transition-colors font-medium">
-                Вернуться на главную
+                {t('admin.login.back')}
               </a>
             </div>
           </div>
@@ -308,21 +316,25 @@ export default function Admin() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-extrabold text-slate-800">Админ-панель</h1>
-        <button
-          onClick={() => setAuthed(false)}
-          className="text-sm text-slate-500 hover:text-primary inline-flex items-center gap-1"
-        >
-          <Icon name="logout" className="text-[18px]" /> Выйти
-        </button>
+        <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white">{t('admin.title')}</h1>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <ThemeToggle />
+          <button
+            onClick={() => setAuthed(false)}
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand inline-flex items-center gap-1 ml-1"
+          >
+            <Icon name="logout" className="text-[18px]" /> {t('dash.logout')}
+          </button>
+        </div>
       </div>
 
       {/* Вкладки */}
-      <div className="flex gap-2 mb-6 border-b border-slate-200">
+      <div className="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
         {[
-          { key: 'opportunities', label: 'Возможности', icon: 'explore' },
-          { key: 'courses', label: 'Курсы', icon: 'menu_book' },
-          { key: 'analytics', label: 'Аналитика', icon: 'monitoring' },
+          { key: 'opportunities', label: t('nav.opportunities'), icon: 'explore' },
+          { key: 'courses', label: t('nav.courses'), icon: 'menu_book' },
+          { key: 'analytics', label: t('admin.tab.analytics'), icon: 'monitoring' },
         ].map((t) => (
           <button
             key={t.key}
@@ -330,7 +342,7 @@ export default function Admin() {
             className={`px-4 py-2.5 font-semibold text-sm inline-flex items-center gap-1.5 border-b-2 -mb-px transition-colors ${
               tab === t.key
                 ? 'border-primary text-primary'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700'
             }`}
           >
             <Icon name={t.icon} className="text-[20px]" /> {t.label}
@@ -342,7 +354,7 @@ export default function Admin() {
       {tab === 'opportunities' && (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <p className="text-slate-500 text-sm">{ops.length} возможностей</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{ops.length} возможностей</p>
             <button
               onClick={() => setOpModal({})}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-emerald-600 transition-colors"
@@ -351,10 +363,10 @@ export default function Admin() {
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-400 border-b border-slate-100">
+                <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
                   <th className="px-4 py-3 font-medium">Название</th>
                   <th className="px-4 py-3 font-medium">Категория</th>
                   <th className="px-4 py-3 font-medium">Дедлайн</th>
@@ -362,13 +374,13 @@ export default function Admin() {
                   <th className="px-4 py-3 font-medium text-right">Действия</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {ops.map((o) => (
                   <tr key={o.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-semibold text-slate-800">{o.title}</td>
-                    <td className="px-4 py-3 text-slate-600">{o.category}</td>
-                    <td className="px-4 py-3 text-slate-600">{formatDate(o.deadline)}</td>
-                    <td className="px-4 py-3 text-slate-600">{o.format}</td>
+                    <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white">{o.title}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{o.category}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{formatDate(o.deadline)}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{o.format}</td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
                         <button
@@ -399,7 +411,7 @@ export default function Admin() {
       {tab === 'courses' && (
         <div>
           <div className="flex justify-between items-center mb-4">
-            <p className="text-slate-500 text-sm">{crs.length} курсов</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{crs.length} курсов</p>
             <button
               onClick={() => {
                 const lessonsMap = getLessons()
@@ -419,14 +431,14 @@ export default function Admin() {
               return (
                 <div
                   key={c.id}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center gap-4"
+                  className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4 flex items-center gap-4"
                 >
                   <span className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.gradient || 'from-brand to-brand-light'} grid place-items-center shrink-0`}>
                     <Icon name={c.icon || 'menu_book'} className="text-white text-[24px]" filled />
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-slate-800">{c.title}</p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-bold text-slate-800 dark:text-white">{c.title}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">
                       {c.level} · {courseLessons.length} уроков
                     </p>
                   </div>
@@ -455,7 +467,7 @@ export default function Admin() {
       {tab === 'analytics' && (
         <div>
           {loadingAnalytics ? (
-            <div className="text-center py-20 text-slate-400">
+            <div className="text-center py-20 text-slate-400 dark:text-slate-500">
               <Icon name="cached" className="animate-spin text-[40px] mb-2" />
               <p>Загрузка статистики...</p>
             </div>
@@ -463,53 +475,53 @@ export default function Admin() {
             <div>
               {/* Стат-карточки */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
                   <div className="w-12 h-12 bg-brand-soft text-brand rounded-xl grid place-items-center mb-3">
                     <Icon name="groups" className="text-[24px]" />
                   </div>
-                  <p className="text-3xl font-extrabold text-slate-800">{analytics.total_students}</p>
-                  <p className="text-sm text-slate-500">Всего учеников зарегистрировано</p>
+                  <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.total_students}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Всего учеников зарегистрировано</p>
                 </div>
-                <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
                   <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl grid place-items-center mb-3">
                     <Icon name="how_to_reg" className="text-[24px]" />
                   </div>
-                  <p className="text-3xl font-extrabold text-slate-800">{analytics.active_students}</p>
-                  <p className="text-sm text-slate-500">Активных (начали хоть 1 курс)</p>
+                  <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.active_students}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Активных (начали хоть 1 курс)</p>
                 </div>
-                <div className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm">
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
                   <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl grid place-items-center mb-3">
                     <Icon name="done_all" className="text-[24px]" />
                   </div>
-                  <p className="text-3xl font-extrabold text-slate-800">{analytics.total_completed_lessons}</p>
-                  <p className="text-sm text-slate-500">Всего пройдено уроков тестов</p>
+                  <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.total_completed_lessons}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Всего пройдено уроков тестов</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Список учеников */}
                 <div className="lg:col-span-2">
-                  <h3 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <Icon name="school" className="text-primary text-[22px]" /> Ученики
                   </h3>
-                  <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-x-auto">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-left text-slate-400 border-b border-slate-100">
+                        <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
                           <th className="px-4 py-3 font-medium">Имя</th>
                           <th className="px-4 py-3 font-medium">Класс</th>
                           <th className="px-4 py-3 font-medium">Тестов пройдено</th>
                           <th className="px-4 py-3 font-medium text-right">Детали</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                         {analytics.students.map((s) => (
                           <tr key={s.id} className="hover:bg-slate-50">
                             <td className="px-4 py-3">
-                              <p className="font-semibold text-slate-800">{s.name}</p>
-                              <p className="text-xs text-slate-400">{s.email}</p>
+                              <p className="font-semibold text-slate-800 dark:text-white">{s.name}</p>
+                              <p className="text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                             </td>
-                            <td className="px-4 py-3 text-slate-600">{s.grade} класс</td>
+                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{s.grade} класс</td>
                             <td className="px-4 py-3 font-medium text-brand">{s.completed_lessons}</td>
                             <td className="px-4 py-3 text-right">
                               <button
@@ -528,19 +540,19 @@ export default function Admin() {
 
                 {/* Статистика по курсам */}
                 <div>
-                  <h3 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                  <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <Icon name="analytics" className="text-primary text-[22px]" /> Популярность курсов
                   </h3>
-                  <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm space-y-4">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4">
                     {analytics.courses.map((c) => (
                       <div key={c.id} className="border-b border-slate-50 pb-3 last:border-0 last:pb-0">
-                        <p className="font-semibold text-slate-800 text-sm mb-1">{c.title}</p>
-                        <div className="flex justify-between text-xs text-slate-500 mb-1.5">
+                        <p className="font-semibold text-slate-800 dark:text-white text-sm mb-1">{c.title}</p>
+                        <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
                           <span>Учеников начали: {c.started_students}</span>
                           <span>Завершили: {c.completed_students}</span>
                         </div>
                         {/* Небольшой прогресс-бар */}
-                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-brand to-brand-light rounded-full"
                             style={{
@@ -555,7 +567,7 @@ export default function Admin() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-20 text-slate-400">Ошибка при получении аналитики</div>
+            <div className="text-center py-20 text-slate-400 dark:text-slate-500">Ошибка при получении аналитики</div>
           )}
         </div>
       )}
@@ -790,16 +802,16 @@ function CourseForm({ initial, onSave, onClose }) {
     <Modal title={form.id ? 'Редактировать курс' : 'Новый курс'} onClose={onClose}>
       {lessonForm !== null ? (
         /* РЕДАКТОР КОНКРЕТНОГО УРОКА */
-        <div className="space-y-4 border-t border-slate-100 pt-4">
+        <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold text-slate-800 text-base">Редактирование урока {activeLessonIndex + 1}</h4>
+            <h4 className="font-bold text-slate-800 dark:text-white text-base">Редактирование урока {activeLessonIndex + 1}</h4>
             <button
               type="button"
               onClick={() => {
                 setActiveLessonIndex(null)
                 setLessonForm(null)
               }}
-              className="text-xs text-slate-500 hover:text-red-500"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-500"
             >
               Отмена
             </button>
@@ -825,15 +837,15 @@ function CourseForm({ initial, onSave, onClose }) {
           </Field>
 
           {/* Редактор теста из 3 вопросов */}
-          <div className="border-t border-slate-100 pt-4 space-y-4">
-            <h5 className="font-bold text-slate-700 text-sm">Мини-тест урока (3 вопроса)</h5>
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
+            <h5 className="font-bold text-slate-700 dark:text-slate-200 text-sm">Мини-тест урока (3 вопроса)</h5>
             {lessonForm.quiz.map((q, qi) => (
-              <div key={qi} className="bg-slate-50 p-3 rounded-xl space-y-2">
+              <div key={qi} className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl space-y-2">
                 <Field label={`Вопрос ${qi + 1}`}>
                   <input
                     value={q.question}
                     onChange={(e) => updateQuizField(qi, 'question', e.target.value)}
-                    className="input bg-white text-sm"
+                    className="input bg-white dark:bg-slate-900 text-sm"
                   />
                 </Field>
                 <div className="grid grid-cols-2 gap-2">
@@ -843,7 +855,7 @@ function CourseForm({ initial, onSave, onClose }) {
                       value={opt}
                       onChange={(e) => updateQuizOption(qi, oi, e.target.value)}
                       placeholder={`Вариант ${oi + 1}`}
-                      className="input bg-white text-xs py-1.5"
+                      className="input bg-white dark:bg-slate-900 text-xs py-1.5"
                     />
                   ))}
                 </div>
@@ -851,7 +863,7 @@ function CourseForm({ initial, onSave, onClose }) {
                   <select
                     value={q.correct}
                     onChange={(e) => updateQuizField(qi, 'correct', Number(e.target.value))}
-                    className="input bg-white text-xs py-1.5"
+                    className="input bg-white dark:bg-slate-900 text-xs py-1.5"
                   >
                     {q.options.map((_, oi) => (
                       <option key={oi} value={oi}>Вариант {oi + 1} ({q.options[oi]})</option>
@@ -921,9 +933,9 @@ function CourseForm({ initial, onSave, onClose }) {
           </div>
 
           {/* Менеджер Уроков */}
-          <div className="border-t border-slate-100 pt-4">
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold text-slate-800 text-sm">Уроки курса ({lessons.length})</h4>
+              <h4 className="font-bold text-slate-800 dark:text-white text-sm">Уроки курса ({lessons.length})</h4>
               <button
                 type="button"
                 onClick={addLesson}
@@ -934,13 +946,13 @@ function CourseForm({ initial, onSave, onClose }) {
             </div>
             
             {lessons.length === 0 ? (
-              <p className="text-xs text-slate-400 text-center py-4">У этого курса пока нет уроков</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">У этого курса пока нет уроков</p>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {lessons.map((l, idx) => (
-                  <div key={l.id} className="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-xs font-bold text-slate-500 shrink-0">Урок {idx + 1}</span>
-                    <span className="text-xs text-slate-800 font-semibold truncate flex-1 mx-3">{l.title}</span>
+                  <div key={l.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Урок {idx + 1}</span>
+                    <span className="text-xs text-slate-800 dark:text-white font-semibold truncate flex-1 mx-3">{l.title}</span>
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
@@ -978,20 +990,20 @@ function StudentDetailModal({ student, onClose, crs }) {
     <Modal title={`Прогресс: ${student.name}`} onClose={onClose}>
       <div className="space-y-4">
         <div>
-          <p className="text-xs text-slate-400">Электронная почта</p>
-          <p className="text-sm font-semibold text-slate-700">{student.email}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Электронная почта</p>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{student.email}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-400">Выбранные интересы</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">Выбранные интересы</p>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {student.interests.length > 0 ? student.interests.map(i => (
               <span key={i} className="text-[10px] font-semibold bg-brand-soft text-brand px-2 py-0.5 rounded-full">{i}</span>
-            )) : <span className="text-xs text-slate-400">Не выбраны</span>}
+            )) : <span className="text-xs text-slate-400 dark:text-slate-500">Не выбраны</span>}
           </div>
         </div>
 
-        <div className="border-t border-slate-100 pt-4">
-          <p className="font-bold text-slate-800 text-sm mb-3">Прохождение курсов</p>
+        <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+          <p className="font-bold text-slate-800 dark:text-white text-sm mb-3">Прохождение курсов</p>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {crs.map(c => {
               const prog = student.progress[c.id] || {}
@@ -1002,19 +1014,19 @@ function StudentDetailModal({ student, onClose, crs }) {
               if (completedCount === 0) return null
 
               return (
-                <div key={c.id} className="bg-slate-50 p-3 rounded-xl">
-                  <div className="flex justify-between text-xs font-bold text-slate-800 mb-1">
+                <div key={c.id} className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl">
+                  <div className="flex justify-between text-xs font-bold text-slate-800 dark:text-white mb-1">
                     <span>{c.title}</span>
                     <span>{completedCount} / {lessonsCount} ({pct}%)</span>
                   </div>
-                  <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div className="h-full bg-emerald-500 transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               )
             })}
             {Object.keys(student.progress).length === 0 && (
-              <p className="text-xs text-slate-400 text-center py-4">Ученик еще не начал ни одного курса</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">Ученик еще не начал ни одного курса</p>
             )}
           </div>
         </div>
@@ -1031,12 +1043,12 @@ function Modal({ title, children, onClose }) {
       onClick={onClose}
     >
       <div
-        className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto"
+        className="bg-white dark:bg-slate-900 w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 sticky top-0 bg-white z-10">
-          <h3 className="font-bold text-lg text-slate-800">{title}</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+          <h3 className="font-bold text-lg text-slate-800 dark:text-white">{title}</h3>
+          <button onClick={onClose} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
             <Icon name="close" className="text-[24px]" />
           </button>
         </div>
@@ -1049,7 +1061,7 @@ function Modal({ title, children, onClose }) {
 function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="text-sm font-semibold text-slate-700 mb-1.5 block">{label}</span>
+      <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5 block">{label}</span>
       {children}
     </label>
   )
@@ -1061,7 +1073,7 @@ function FormActions({ onClose }) {
       <button
         type="button"
         onClick={onClose}
-        className="flex-1 py-3 rounded-xl font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+        className="flex-1 py-3 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
       >
         Отмена
       </button>

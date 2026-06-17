@@ -10,8 +10,8 @@ export default function Courses() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-800">Курсы</h1>
-        <p className="text-slate-600 mt-2">Асинхронные курсы — учись в удобное время</p>
+        <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white">Курсы</h1>
+        <p className="text-slate-600 dark:text-slate-300 mt-2">Асинхронные курсы — учись в удобное время</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -24,7 +24,7 @@ export default function Courses() {
           return (
             <div
               key={course.id}
-              className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow"
             >
               {/* Обложка */}
               <div className={`h-36 bg-gradient-to-br ${course.gradient} relative overflow-hidden`}>
@@ -41,10 +41,10 @@ export default function Courses() {
               </div>
 
               <div className="p-5 flex flex-col flex-1">
-                <h3 className="font-bold text-lg text-slate-800 mb-2">{course.title}</h3>
-                <p className="text-sm text-slate-600 mb-4 flex-1">{course.description}</p>
+                <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-2">{course.title}</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 flex-1">{course.description}</p>
 
-                <div className="flex items-center gap-3 text-xs text-slate-500 mb-4">
+                <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mb-4">
                   <span className="inline-flex items-center gap-1">
                     <Icon name="menu_book" className="text-[16px]" /> {total} урока
                   </span>
@@ -55,11 +55,11 @@ export default function Courses() {
 
                 {started && (
                   <div className="mb-4">
-                    <div className="flex justify-between text-xs text-slate-500 mb-1">
+                    <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
                       <span>Прогресс</span>
                       <span className="font-semibold text-primary">{pct}%</span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-accent rounded-full transition-all"
                         style={{ width: `${pct}%` }}
