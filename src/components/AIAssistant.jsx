@@ -10,7 +10,7 @@ function buildSystemPrompt() {
   const profileText = p
     ? `${p.grade} класс, интересы: ${(p.interests || []).join(', ') || '—'}, цели: ${(p.goals || []).join(', ') || '—'}`
     : 'профиль не заполнен'
-  return `Ты AI-помощник образовательной платформы Mentoria Hub для школьников Казахстана.
+  return `Ты AI-помощник образовательной платформы Makquiz Hub для школьников Казахстана.
 Профиль ученика: {${profileText}}.
 Помогай находить подходящие образовательные возможности и курсы.
 Отвечай кратко, по делу, на русском языке.`
@@ -23,7 +23,7 @@ export default function AIAssistant() {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Здравствуйте! Я помощник Mentoria Hub. Спросите меня про олимпиады, курсы или поступление.',
+      content: 'Здравствуйте! Я помощник Makquiz Hub. Спросите меня про олимпиады, курсы или поступление.',
     },
   ])
   const scrollRef = useRef(null)
@@ -111,7 +111,7 @@ export default function AIAssistant() {
             </span>
             <div>
               <p className="font-semibold text-sm leading-tight">AI-помощник</p>
-              <p className="text-xs text-white/80 leading-tight">Mentoria Hub</p>
+              <p className="text-xs text-white/80 leading-tight">Makquiz Hub</p>
             </div>
           </div>
 

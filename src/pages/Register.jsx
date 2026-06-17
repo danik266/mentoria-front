@@ -25,9 +25,10 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        login(data.access_token, data.user);
-        toast.success('Аккаунт создан!');
-        navigate('/onboarding');
+        toast.success('Код подтверждения отправлен на почту!');
+        setTimeout(() => {
+          navigate('/confirm-email', { state: { email } });
+        }, 1500);
       } else {
         toast.error(data.detail || 'Не удалось зарегистрироваться');
       }

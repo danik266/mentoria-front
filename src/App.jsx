@@ -10,6 +10,9 @@ import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ConfirmEmail from './pages/ConfirmEmail'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 import DashboardHome from './pages/DashboardHome'
 import Opportunities from './pages/Opportunities'
@@ -42,7 +45,14 @@ export default function App() {
   const isAppRoute = location.pathname.startsWith('/app')
   const isOnboarding = location.pathname === '/onboarding'
   const isCertificate = location.pathname.startsWith('/certificate')
-  const isAuth = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/admin'
+  const isAuth = [
+    '/login',
+    '/register',
+    '/admin',
+    '/confirm-email',
+    '/forgot-password',
+    '/reset-password'
+  ].includes(location.pathname)
   const bare = isOnboarding || isCertificate || isAuth || isAppRoute
 
   return (
@@ -56,6 +66,9 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={user ? <Navigate to="/app" replace /> : <Login />} />
           <Route path="/register" element={user ? <Navigate to="/app" replace /> : <Register />} />
+          <Route path="/confirm-email" element={user ? <Navigate to="/app" replace /> : <ConfirmEmail />} />
+          <Route path="/forgot-password" element={user ? <Navigate to="/app" replace /> : <ForgotPassword />} />
+          <Route path="/reset-password" element={user ? <Navigate to="/app" replace /> : <ResetPassword />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/certificate/:courseId" element={<Certificate />} />
 

@@ -12,7 +12,7 @@ export default function Logo({ to = '/', size = 'md', subtitle = null, className
       <Icon name="school" className={`text-brand ${icon}`} filled />
       <span className="leading-tight">
         <span className={`block font-extrabold ${text} text-slate-900 dark:text-white`}>
-          Mentoria <span className="text-brand">Hub</span>
+          Makquiz <span className="text-brand">Hub</span>
         </span>
         {subtitle && (
           <span className="block text-xs text-slate-500 dark:text-slate-400">{subtitle}</span>

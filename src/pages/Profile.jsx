@@ -5,13 +5,18 @@ import { interestsList, goalsList } from '../data/mock'
 import Icon from '../components/Icon'
 
 export default function Profile() {
-  const { user, logout } = useAuth()
+  const { user, logout, botUsername } = useAuth()
 
   const [profile, setProfile] = useState(() => getProfile() || {})
   const [name, setName] = useState(profile.name || user?.name || '')
   const [grade, setGrade] = useState(profile.grade || 8)
   const [interests, setInterests] = useState(profile.interests || [])
   const [goals, setGoals] = useState(profile.goals || [])
+  const [telegram, setTelegram] = useState(profile.telegram || '')
+  const [emailNotifications, setEmailNotifications] = useState(profile.email_notifications !== false)
+  const [telegramNotifications, setTelegramNotifications] = useState(profile.telegram_notifications !== false)
+  const [emailCerts, setEmailCerts] = useState(profile.email_certs !== false)
+  const [telegramCerts, setTelegramCerts] = useState(profile.telegram_certs !== false)
   const [saved, setSaved] = useState(false)
 
   const toggleInterest = (item) =>
@@ -21,7 +26,17 @@ export default function Profile() {
     setGoals((prev) => (prev.includes(item) ? prev.filter((g) => g !== item) : [...prev, item]))
 
   const handleSave = () => {
-    const updated = { name, grade: Number(grade), interests, goals }
+    const updated = {
+      name,
+      grade: Number(grade),
+      interests,
+      goals,
+      telegram,
+      email_notifications: emailNotifications,
+      telegram_notifications: telegramNotifications,
+      email_certs: emailCerts,
+      telegram_certs: telegramCerts
+    }
     saveProfile(updated)
     setProfile(updated)
     setSaved(true)
@@ -105,11 +120,10 @@ export default function Profile() {
               <button
                 key={item}
                 onClick={() => toggleInterest(item)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  active
-                    ? 'bg-brand text-white shadow-md shadow-brand/20 scale-[1.02]'
-                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-soft hover:bg-brand-soft'
-                }`}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${active
+                  ? 'bg-brand text-white shadow-md shadow-brand/20 scale-[1.02]'
+                  : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-brand-soft hover:bg-brand-soft'
+                  }`}
               >
                 {item}
               </button>
@@ -132,16 +146,109 @@ export default function Profile() {
               <button
                 key={item}
                 onClick={() => toggleGoal(item)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  active
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 scale-[1.02]'
-                    : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-200 hover:bg-emerald-50'
-                }`}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${active
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20 scale-[1.02]'
+                  : 'bg-slate-50 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-200 hover:bg-emerald-50'
+                  }`}
               >
                 {item}
               </button>
             )
           })}
+        </div>
+      </div>
+
+      {/* Notification Settings */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
+        <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
+          <Icon name="notifications" className="text-[22px] text-brand" filled />
+          Настройки уведомлений
+        </h3>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">
+          Управляйте каналами связи для дедлайнов и сертификатов
+        </p>
+
+        {/* Telegram Username */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
+            Telegram Username (без @)
+          </label>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={telegram}
+              onChange={(e) => setTelegram(e.target.value.replace('@', ''))}
+              placeholder="tihon2008"
+              className="flex-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
+            />
+            {telegram && (
+              <a
+                href={`https://t.me/${botUsername}?start=${user?.id || (user?.email ? user.email.replace('@', '_at_').replace(/\./g, '_dot_') : '')
+                  }`}
+                target="_blank"
+                rel="noreferrer"
+                className="px-6 py-3 bg-brand-soft hover:bg-brand text-brand hover:text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-brand/5"
+              >
+                Подключить Telegram-бота
+              </a>
+            )}
+          </div>
+          <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+            После сохранения имени пользователя нажмите «Подключить Telegram-бота» и отправьте боту кнопку или команду <b>/start</b>, чтобы активировать оповещения.
+          </p>
+        </div>
+
+        {/* Toggles */}
+        <div className="space-y-4">
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Напоминания о дедлайнах:</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                  className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
+                />
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Email почта</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={telegramNotifications}
+                  onChange={(e) => setTelegramNotifications(e.target.checked)}
+                  className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
+                  disabled={!telegram}
+                />
+                <span className={`text-xs font-medium ${!telegram ? 'text-slate-300 dark:text-slate-600' : 'text-slate-600 dark:text-slate-300'}`}>Telegram</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Получение сертификатов:</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={emailCerts}
+                  onChange={(e) => setEmailCerts(e.target.checked)}
+                  className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
+                />
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Email почта</span>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={telegramCerts}
+                  onChange={(e) => setTelegramCerts(e.target.checked)}
+                  className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
+                  disabled={!telegram}
+                />
+                <span className={`text-xs font-medium ${!telegram ? 'text-slate-300 dark:text-slate-600' : 'text-slate-600 dark:text-slate-300'}`}>Telegram</span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 

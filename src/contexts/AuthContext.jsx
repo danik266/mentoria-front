@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
+  const [botUsername, setBotUsername] = useState(localStorage.getItem('mh_telegram_bot_username') || 'makquizhub_bot');
 
   // Here we would typically fetch the user profile using the token
   // For simplicity, we just use the token to signify "logged in"
@@ -39,6 +40,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('mh_saved', JSON.stringify(data.saved));
             localStorage.setItem('mh_courses', JSON.stringify(data.courses));
             localStorage.setItem('mh_opportunities', JSON.stringify(data.opportunities));
+            if (data.telegram_bot_username) {
+              localStorage.setItem('mh_telegram_bot_username', data.telegram_bot_username);
+              setBotUsername(data.telegram_bot_username);
+            }
             
             const lessonsMap = {};
             data.courses.forEach(c => {
@@ -80,7 +85,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, loading, botUsername }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -28,7 +28,14 @@ export default function Login() {
         toast.success('Вы вошли в аккаунт');
         navigate('/app');
       } else {
-        toast.error(data.detail || 'Не удалось войти');
+        if (data.detail === 'Email not confirmed') {
+          toast.error('Почта не подтверждена. Перенаправляем на страницу активации...');
+          setTimeout(() => {
+            navigate('/confirm-email', { state: { email } });
+          }, 2000);
+        } else {
+          toast.error(data.detail || 'Не удалось войти');
+        }
       }
     } catch (err) {
       toast.error('Ошибка сети. Проверьте, запущен ли бэкенд.');
@@ -66,7 +73,12 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Пароль</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Пароль</label>
+                <Link to="/forgot-password" className="text-xs font-semibold text-brand hover:text-brand-dark transition-colors">
+                  Забыли пароль?
+                </Link>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className={field} placeholder="••••••••" />
