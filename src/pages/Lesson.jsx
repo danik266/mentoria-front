@@ -78,9 +78,14 @@ export default function Lesson() {
     const newCompleted = new Set([...completedSteps, step])
     setCompletedSteps(newCompleted)
 
+    const isLastStep = step === activities.length - 1
+
     if (newCompleted.size === activities.length) {
       startCourse(id)
       completeLesson(id, lessonId)
+    }
+
+    if (isLastStep) {
       goNext()
       return
     }

@@ -113,26 +113,35 @@ export default function ActivityQuiz({ activity, onComplete }) {
         </div>
       )}
 
-      <div className="flex gap-3">
-        {!checked ? (
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={handleCheck}
+          disabled={checked || !canCheck}
+          className={`w-full py-3.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 ${
+            checked 
+              ? 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed hidden'
+              : 'bg-brand text-white hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed'
+          }`}
+        >
+          Проверить ответы
+        </button>
+
+        {checked && !allCorrect && (
           <button
-            onClick={handleCheck}
-            disabled={!canCheck}
-            className="flex-1 py-3.5 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            Проверить ответы
-          </button>
-        ) : !allCorrect ? (
-          <button
+            type="button"
             onClick={handleRetry}
-            className="flex-1 py-3.5 rounded-xl border-2 border-brand-light text-brand-dark font-semibold hover:bg-brand-soft transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl border-2 border-brand-light text-brand-dark font-semibold hover:bg-brand-soft transition-colors flex items-center justify-center gap-2 animate-fade-in"
           >
             <Icon name="refresh" className="text-[20px]" /> Попробовать снова
           </button>
-        ) : (
+        )}
+
+        {checked && allCorrect && (
           <button
+            type="button"
             onClick={onComplete}
-            className="flex-1 py-3.5 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2 animate-fade-in"
           >
             Следующий урок <Icon name="arrow_forward" className="text-[22px]" />
           </button>
