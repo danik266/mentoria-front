@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import DashboardLayout from './components/DashboardLayout'
 import SiteBackground from './components/SiteBackground'
+import { API_BASE } from './utils/api'
 
 import Home from './pages/Home'
 import Onboarding from './pages/Onboarding'
@@ -49,9 +50,7 @@ export default function App() {
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
         }
-        // Use relative path or look up VITE_API_URL / fallback to standard port
-        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-        await fetch(`${apiBase}/api/log-visit`, {
+        await fetch(`${API_BASE}/api/log-visit`, {
           method: 'POST',
           headers
         });
