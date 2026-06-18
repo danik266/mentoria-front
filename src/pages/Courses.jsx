@@ -1,17 +1,19 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import Icon from '../components/Icon'
+import { useLanguage } from '../contexts/LanguageContext'
 import { getCourses, completedCount, getLessons, isCourseStarted } from '../utils/storage'
 
 export default function Courses() {
+  const { t } = useLanguage()
   const courses = useMemo(() => getCourses(), [])
   const lessons = useMemo(() => getLessons(), [])
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">Курсы</h1>
-        <p className="text-slate-600 dark:text-slate-300 mt-1.5 sm:mt-2">Асинхронные курсы — учись в удобное время</p>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">{t('courses.title')}</h1>
+        <p className="text-slate-600 dark:text-slate-300 mt-1.5 sm:mt-2">{t('courses.subtitle')}</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
@@ -46,7 +48,7 @@ export default function Courses() {
 
                 <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 mb-4">
                   <span className="inline-flex items-center gap-1">
-                    <Icon name="menu_book" className="text-[16px]" /> {total} урока
+                    <Icon name="menu_book" className="text-[16px]" /> {total} {t('courses.lessonsWord')}
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <Icon name="signal_cellular_alt" className="text-[16px]" /> {course.level}
@@ -56,7 +58,7 @@ export default function Courses() {
                 {started && (
                   <div className="mb-4">
                     <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
-                      <span>Прогресс</span>
+                      <span>{t('courses.progress')}</span>
                       <span className="font-semibold text-primary">{pct}%</span>
                     </div>
                     <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -72,7 +74,7 @@ export default function Courses() {
                   to={`/app/courses/${course.id}`}
                   className="mt-auto w-full py-2.5 rounded-xl bg-primary text-white text-center font-semibold text-sm hover:bg-primary-dark transition-colors"
                 >
-                  {started ? 'Продолжить' : 'Начать курс'}
+                  {started ? t('courses.continue') : t('courses.start')}
                 </Link>
               </div>
             </div>

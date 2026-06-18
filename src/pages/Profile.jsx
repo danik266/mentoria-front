@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import { getProfile, saveProfile } from '../utils/storage'
 import { interestsList, goalsList } from '../data/mock'
 import Icon from '../components/Icon'
 
 export default function Profile() {
   const { user, logout, botUsername } = useAuth()
+  const { t } = useLanguage()
 
   const [profile, setProfile] = useState(() => getProfile() || {})
   const [name, setName] = useState(profile.name || user?.name || '')
@@ -46,8 +48,8 @@ export default function Profile() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-white">Настройки профиля</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Обновите ваши данные и предпочтения</p>
+        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-white">{t('prof.title')}</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{t('prof.subtitle')}</p>
       </div>
 
       {/* Avatar & Account info */}
@@ -62,11 +64,11 @@ export default function Profile() {
               .slice(0, 2)}
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{name || 'Без имени'}</h2>
-            <p className="text-sm text-slate-400 dark:text-slate-500">{user?.email || 'email не указан'}</p>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{name || t('prof.noName')}</h2>
+            <p className="text-sm text-slate-400 dark:text-slate-500">{user?.email || t('prof.noEmail')}</p>
             <div className="flex items-center gap-1.5 mt-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-xs text-emerald-600 font-medium">Аккаунт активен</span>
+              <span className="text-xs text-emerald-600 font-medium">{t('prof.accountActive')}</span>
             </div>
           </div>
         </div>
@@ -76,21 +78,21 @@ export default function Profile() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 dark:text-white text-base mb-4 flex items-center gap-2">
           <Icon name="badge" className="text-[22px] text-brand" filled />
-          Личные данные
+          {t('prof.personalData')}
         </h3>
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Имя</label>
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">{t('prof.name')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Ваше имя"
+              placeholder={t('prof.namePlaceholder')}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand-light transition-all"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">Класс</label>
+            <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">{t('prof.grade')}</label>
             <select
               value={grade}
               onChange={(e) => setGrade(e.target.value)}
@@ -98,7 +100,7 @@ export default function Profile() {
             >
               {[8, 9, 10, 11].map((g) => (
                 <option key={g} value={g}>
-                  {g} класс
+                  {g} {t('prof.gradeSuffix')}
                 </option>
               ))}
             </select>
@@ -110,9 +112,9 @@ export default function Profile() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
           <Icon name="interests" className="text-[22px] text-brand" filled />
-          Интересы
+          {t('prof.interests')}
         </h3>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Выберите области, которые вам интересны</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">{t('prof.interestsHint')}</p>
         <div className="flex flex-wrap gap-2">
           {interestsList.map((item) => {
             const active = interests.includes(item)
@@ -136,9 +138,9 @@ export default function Profile() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
           <Icon name="flag" className="text-[22px] text-brand" filled />
-          Цели
+          {t('prof.goals')}
         </h3>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Что вы хотите достичь?</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">{t('prof.goalsHint')}</p>
         <div className="flex flex-wrap gap-2">
           {goalsList.map((item) => {
             const active = goals.includes(item)
@@ -162,16 +164,16 @@ export default function Profile() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
         <h3 className="font-bold text-slate-800 dark:text-white text-base mb-1 flex items-center gap-2">
           <Icon name="notifications" className="text-[22px] text-brand" filled />
-          Настройки уведомлений
+          {t('prof.notifications')}
         </h3>
         <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">
-          Управляйте каналами связи для дедлайнов и сертификатов
+          {t('prof.notificationsHint')}
         </p>
 
         {/* Telegram Username */}
         <div className="mb-6">
           <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
-            Telegram Username (без @)
+            {t('prof.tgUsername')}
           </label>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
@@ -189,19 +191,19 @@ export default function Profile() {
                 rel="noreferrer"
                 className="px-6 py-3 bg-brand-soft hover:bg-brand text-brand hover:text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-brand/5"
               >
-                Подключить Telegram-бота
+                {t('prof.connectBot')}
               </a>
             )}
           </div>
           <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
-            После сохранения имени пользователя нажмите «Подключить Telegram-бота» и отправьте боту кнопку или команду <b>/start</b>, чтобы активировать оповещения.
+            {t('prof.tgHint')}
           </p>
         </div>
 
         {/* Toggles */}
         <div className="space-y-4">
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
-            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Напоминания о дедлайнах:</h4>
+            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('prof.deadlineReminders')}</h4>
             <div className="grid grid-cols-2 gap-4">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -210,7 +212,7 @@ export default function Profile() {
                   onChange={(e) => setEmailNotifications(e.target.checked)}
                   className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
                 />
-                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Email почта</span>
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">{t('prof.emailChannel')}</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -226,7 +228,7 @@ export default function Profile() {
           </div>
 
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
-            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Получение сертификатов:</h4>
+            <h4 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('prof.certsReceiving')}</h4>
             <div className="grid grid-cols-2 gap-4">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -235,7 +237,7 @@ export default function Profile() {
                   onChange={(e) => setEmailCerts(e.target.checked)}
                   className="w-5 h-5 rounded-lg border-slate-300 dark:border-slate-700 text-brand focus:ring-brand"
                 />
-                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">Email почта</span>
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium">{t('prof.emailChannel')}</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
@@ -258,12 +260,12 @@ export default function Profile() {
           onClick={handleSave}
           className="px-8 py-3 rounded-xl bg-gradient-to-r from-brand to-brand text-white font-bold text-sm hover:from-brand hover:to-brand-light transition-all duration-300 shadow-lg shadow-brand/20 hover:-translate-y-0.5"
         >
-          Сохранить изменения
+          {t('prof.save')}
         </button>
         {saved && (
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 animate-fade-in">
             <Icon name="check_circle" className="text-[20px]" filled />
-            Сохранено!
+            {t('prof.saved')}
           </span>
         )}
       </div>
@@ -272,18 +274,18 @@ export default function Profile() {
       <div className="mt-10 bg-red-50 dark:bg-red-900/10 rounded-3xl border border-red-100 dark:border-red-900/30 p-6">
         <h3 className="font-bold text-red-800 dark:text-red-400 text-base mb-1 flex items-center gap-2">
           <Icon name="warning" className="text-[22px] text-red-500 dark:text-red-400" filled />
-          Опасная зона
+          {t('prof.dangerZone')}
         </h3>
-        <p className="text-xs text-red-600/70 dark:text-red-400/70 mb-4">Действия здесь необратимы</p>
+        <p className="text-xs text-red-600/70 dark:text-red-400/70 mb-4">{t('prof.dangerHint')}</p>
         <button
           onClick={() => {
-            if (confirm('Вы уверены что хотите выйти из аккаунта?')) {
+            if (confirm(t('prof.logoutConfirm'))) {
               logout()
             }
           }}
           className="px-6 py-2.5 rounded-xl border border-red-200 dark:border-red-900/50 bg-white dark:bg-slate-900 text-red-600 dark:text-red-400 font-semibold text-sm hover:bg-red-600 hover:text-white hover:border-red-600 dark:hover:bg-red-900/40 dark:hover:text-red-300 dark:hover:border-red-800 transition-all duration-200"
         >
-          Выйти из аккаунта
+          {t('prof.logout')}
         </button>
       </div>
     </div>

@@ -3,11 +3,14 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, KeyRound, Lock, ArrowLeft } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 import { API_BASE } from '../utils/api';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState(location.state?.email || '');
   const [code, setCode] = useState('');
@@ -18,19 +21,19 @@ export default function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
-      toast.error('Укажите email');
+      toast.error(t('reset.needEmail'));
       return;
     }
     if (code.length < 6) {
-      toast.error('Введите 6-значный код восстановления');
+      toast.error(t('reset.needCode'));
       return;
     }
     if (newPassword.length < 6) {
-      toast.error('Пароль должен состоять минимум из 6 символов');
+      toast.error(t('reset.passwordShort'));
       return;
     }
     if (newPassword !== confirmPassword) {
-      toast.error('Пароли не совпадают');
+      toast.error(t('reset.passwordMismatch'));
       return;
     }
 
@@ -47,16 +50,16 @@ export default function ResetPassword() {
       });
 
       if (response.ok) {
-        toast.success('Пароль успешно изменен! Войдите с новым паролем.');
+        toast.success(t('reset.success'));
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
         const data = await response.json();
-        toast.error(data.detail || 'Неверный код или срок действия кода истек');
+        toast.error(data.detail || t('reset.invalidCode'));
       }
     } catch (err) {
-      toast.error('Ошибка сети. Проверьте соединение.');
+      toast.error(t('common.networkErrorShort'));
     } finally {
       setLoading(false);
     }
@@ -71,14 +74,17 @@ export default function ResetPassword() {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center mb-8">
           <Logo to="/" size="lg" />
         </div>
-        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">Новый пароль</h2>
+        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">{t('reset.title')}</h2>
         <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
-          Введите полученный код восстановления и новый пароль
+          {t('reset.subtitle')}
         </p>
       </div>
 
@@ -87,7 +93,7 @@ export default function ResetPassword() {
           <form className="space-y-4" onSubmit={handleSubmit}>
             {!location.state?.email && (
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email почта</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('reset.emailLabel')}</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
@@ -104,14 +110,14 @@ export default function ResetPassword() {
 
             {location.state?.email && (
               <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl p-4 text-center">
-                <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Восстановление для</span>
+                <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1">{t('reset.forLabel')}</span>
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{email}</span>
               </div>
             )}
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 text-center">
-                Код восстановления
+                {t('reset.codeLabel')}
               </label>
               <div className="relative flex justify-center items-center">
                 {/* 6 Visual OTP boxes */}
@@ -154,7 +160,7 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Новый пароль</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('reset.newPassword')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
@@ -170,7 +176,7 @@ export default function ResetPassword() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Подтвердите пароль</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('reset.confirmPassword')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
@@ -190,7 +196,7 @@ export default function ResetPassword() {
               disabled={loading || code.length < 6 || newPassword.length < 6}
               className="w-full flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-brand hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand disabled:opacity-50 transition-all transform hover:-translate-y-0.5"
             >
-              {loading ? 'Сбрасываем пароль…' : 'Сохранить и войти'}
+              {loading ? t('reset.submitting') : t('reset.submit')}
             </button>
           </form>
 
@@ -199,7 +205,7 @@ export default function ResetPassword() {
               to="/forgot-password"
               className="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-brand transition-colors inline-flex items-center gap-1"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Изменить email
+              <ArrowLeft className="h-3.5 w-3.5" /> {t('reset.changeEmail')}
             </Link>
           </div>
         </div>

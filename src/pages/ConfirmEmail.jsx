@@ -4,12 +4,15 @@ import { useAuth } from '../contexts/AuthContext';
 import { KeyRound, Mail, ArrowLeft } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 import { API_BASE } from '../utils/api';
 
 export default function ConfirmEmail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { t } = useLanguage();
   
   // Try to retrieve email from register state, otherwise default to empty
   const [email, setEmail] = useState(location.state?.email || '');
@@ -33,11 +36,11 @@ export default function ConfirmEmail() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
-      toast.error('Укажите email адрес');
+      toast.error(t('confirm.needEmail'));
       return;
     }
     if (code.length < 6) {
-      toast.error('Код должен состоять из 6 цифр');
+      toast.error(t('confirm.needCode'));
       return;
     }
 
@@ -52,13 +55,13 @@ export default function ConfirmEmail() {
 
       if (response.ok) {
         login(data.access_token, data.user);
-        toast.success('Почта успешно подтверждена!');
+        toast.success(t('confirm.success'));
         navigate('/onboarding');
       } else {
-        toast.error(data.detail || 'Неверный код подтверждения');
+        toast.error(data.detail || t('confirm.invalidCode'));
       }
     } catch (err) {
-      toast.error('Ошибка сети. Проверьте соединение.');
+      toast.error(t('common.networkErrorShort'));
     } finally {
       setLoading(false);
     }
@@ -66,7 +69,7 @@ export default function ConfirmEmail() {
 
   const handleResend = async () => {
     if (!email) {
-      toast.error('Укажите email адрес');
+      toast.error(t('confirm.needEmail'));
       return;
     }
     setResending(true);
@@ -77,14 +80,14 @@ export default function ConfirmEmail() {
         body: JSON.stringify({ email }),
       });
       if (response.ok) {
-        toast.success('Новый код отправлен на вашу почту!');
+        toast.success(t('confirm.newCodeSent'));
         setTimer(60); // Start 60s cooldown
       } else {
         const data = await response.json();
-        toast.error(data.detail || 'Не удалось отправить код');
+        toast.error(data.detail || t('confirm.resendFailed'));
       }
     } catch (err) {
-      toast.error('Ошибка сети при повторной отправке');
+      toast.error(t('confirm.resendError'));
     } finally {
       setResending(false);
     }
@@ -99,14 +102,17 @@ export default function ConfirmEmail() {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center mb-8">
           <Logo to="/" size="lg" />
         </div>
-        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">Подтверждение почты</h2>
+        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">{t('confirm.title')}</h2>
         <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
-          Мы отправили 6-значный код на вашу почту
+          {t('confirm.subtitle')}
         </p>
       </div>
 
@@ -115,7 +121,7 @@ export default function ConfirmEmail() {
           <form className="space-y-5" onSubmit={handleSubmit}>
             {!location.state?.email && (
               <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email почта</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('confirm.emailLabel')}</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
@@ -132,14 +138,14 @@ export default function ConfirmEmail() {
 
             {location.state?.email && (
               <div className="bg-brand-soft/40 border border-brand-soft rounded-2xl p-4 text-center">
-                <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1">Код отправлен на</span>
+                <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1">{t('confirm.sentTo')}</span>
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{email}</span>
               </div>
             )}
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 text-center">
-                Код подтверждения
+                {t('confirm.codeLabel')}
               </label>
               <div className="relative flex justify-center items-center">
                 {/* 6 Visual OTP boxes */}
@@ -186,14 +192,14 @@ export default function ConfirmEmail() {
               disabled={loading || code.length < 6}
               className="w-full flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-brand hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand disabled:opacity-50 transition-all transform hover:-translate-y-0.5"
             >
-              {loading ? 'Проверяем код…' : 'Активировать аккаунт'}
+              {loading ? t('confirm.submitting') : t('confirm.submit')}
             </button>
           </form>
 
           <div className="mt-6 flex flex-col items-center gap-4 border-t border-slate-100 dark:border-slate-800 pt-4">
             {timer > 0 ? (
               <p className="text-xs text-slate-400">
-                Запросить новый код можно через {timer} сек.
+                {t('confirm.resendIn').replace('{n}', timer)}
               </p>
             ) : (
               <button
@@ -201,7 +207,7 @@ export default function ConfirmEmail() {
                 disabled={resending || !email}
                 className="text-xs font-semibold text-brand hover:text-brand-dark transition-colors disabled:opacity-50"
               >
-                {resending ? 'Отправляем…' : 'Отправить код повторно'}
+                {resending ? t('confirm.resending') : t('confirm.resend')}
               </button>
             )}
 
@@ -209,7 +215,7 @@ export default function ConfirmEmail() {
               onClick={() => navigate('/login')}
               className="text-xs font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
             >
-              <ArrowLeft className="h-3 w-3" /> Вернуться к входу
+              <ArrowLeft className="h-3 w-3" /> {t('confirm.backToLogin')}
             </button>
           </div>
         </div>

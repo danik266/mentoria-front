@@ -2,13 +2,15 @@ import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Icon from '../components/Icon'
 import Logo from '../components/Logo'
+import { useLanguage } from '../contexts/LanguageContext'
 import { getCourses, getProfile, formatDate, getLessons, completedCount } from '../utils/storage'
 
 export default function Certificate() {
   const { courseId } = useParams()
+  const { t } = useLanguage()
   const course = useMemo(() => getCourses().find((c) => c.id === courseId), [courseId])
   const profile = getProfile()
-  const name = profile?.name || 'Ученик'
+  const name = profile?.name || t('common.student')
   const today = new Date().toISOString().slice(0, 10)
 
   const totalLessons = useMemo(() => {
@@ -30,15 +32,15 @@ export default function Certificate() {
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-4">
             <Icon name="lock" className="text-3xl" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Доступ ограничен</h2>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{t('cert.accessDenied')}</h2>
           <p className="text-slate-500 dark:text-slate-400 mb-6">
-            Сертификат будет доступен только после успешного прохождения всех уроков курса «{course?.title || 'Курс'}».
+            {t('cert.accessDesc').replace('{title}', course?.title || t('cert.courseFallback'))}
           </p>
           <Link
             to={course ? `/app/courses/${courseId}` : '/app/courses'}
             className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-all w-full"
           >
-            Вернуться к курсу
+            {t('cert.backToCourse')}
           </Link>
         </div>
       </div>
@@ -95,13 +97,13 @@ export default function Certificate() {
           to={course ? `/app/courses/${courseId}` : '/app/courses'}
           className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors inline-flex items-center gap-1.5 font-medium"
         >
-          <Icon name="arrow_back" className="text-[20px]" /> Назад к курсу
+          <Icon name="arrow_back" className="text-[20px]" /> {t('cert.backToCourseShort')}
         </Link>
         <button
           onClick={() => window.print()}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark transition-all shadow-md shadow-primary/20 hover:-translate-y-0.5"
         >
-          <Icon name="print" className="text-[20px]" /> Распечатать / Скачать A4
+          <Icon name="print" className="text-[20px]" /> {t('cert.print')}
         </button>
       </div>
 
@@ -136,19 +138,19 @@ export default function Certificate() {
 
             {/* Заголовок */}
             <div className="my-auto py-2">
-              <p className="uppercase tracking-[0.4em] text-xs font-bold text-slate-400 mb-3">Официальный сертификат</p>
+              <p className="uppercase tracking-[0.4em] text-xs font-bold text-slate-400 mb-3">{t('cert.official')}</p>
               <h1 className="text-3xl sm:text-4xl font-black text-slate-800 tracking-tight mb-4">
-                ОБ ОКОНЧАНИИ КУРСА
+                {t('cert.completionTitle')}
               </h1>
-              
-              <p className="text-slate-500 font-medium italic mb-2">Настоящим подтверждается, что ученик</p>
+
+              <p className="text-slate-500 font-medium italic mb-2">{t('cert.certifies')}</p>
               <h2 className="text-4xl sm:text-5xl font-black text-primary border-b-2 border-slate-200 inline-block px-12 pb-3 mb-4 font-serif">
                 {name}
               </h2>
-              
-              <p className="text-slate-500 font-medium mb-1.5">успешно завершил(а) обучение по программе</p>
+
+              <p className="text-slate-500 font-medium mb-1.5">{t('cert.completedProgram')}</p>
               <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight max-w-2xl mx-auto">
-                «{course ? course.title : 'Курс Mentoria Hub'}»
+                «{course ? course.title : t('cert.courseDefault')}»
               </h3>
             </div>
 
@@ -171,7 +173,7 @@ export default function Certificate() {
                 <p className="font-bold text-slate-700 border-b border-slate-300 pb-1 text-xs sm:text-sm md:text-base inline-block px-4">
                   {formatDate(today)} {new Date().getFullYear()}
                 </p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">Дата выдачи</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1.5">{t('cert.issueDate')}</p>
               </div>
 
               {/* Золотая Печать */}
@@ -192,7 +194,7 @@ export default function Certificate() {
               <div className="text-center w-1/3 flex flex-col items-center">
                 <p className="font-[cursive] text-lg sm:text-2xl text-primary leading-none h-7">Mentoria Hub</p>
                 <p className="font-bold text-slate-700 border-t border-slate-300 pt-1.5 text-[10px] sm:text-xs uppercase tracking-wider inline-block px-4">
-                  Подпись школы
+                  {t('cert.schoolSignature')}
                 </p>
               </div>
               

@@ -1,8 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import Icon from '../components/Icon'
 import { categoryColors } from '../data/mock'
+import { API_BASE } from '../utils/api'
+import EventCalendar from '../components/EventCalendar'
 import {
   getProfile,
   getCourses,
@@ -12,7 +15,6 @@ import {
   daysUntil,
   formatDate,
   urgencyColor,
-  urgencyDot,
   isCourseStarted,
   removeCourseProgress,
   getLessons,
@@ -20,12 +22,58 @@ import {
 
 export default function DashboardHome() {
   const { user } = useAuth()
+  const { t } = useLanguage()
   const [refresh, setRefresh] = useState(0)
+  
+  // AI Welcome State
+  const [showAIWelcome, setShowAIWelcome] = useState(false)
+  const [aiMessage, setAiMessage] = useState('')
+  const [aiLoading, setAiLoading] = useState(false)
+
   const profile = getProfile()
   const courses = useMemo(() => getCourses(), [])
   const allOps = useMemo(() => getOpportunities(), [])
   const savedIds = getSaved()
   const allLessons = useMemo(() => getLessons(), [])
+
+  useEffect(() => {
+    // Check if we just finished onboarding
+    const justOnboarded = localStorage.getItem('mh_just_onboarded')
+    if (justOnboarded) {
+      localStorage.removeItem('mh_just_onboarded')
+      setShowAIWelcome(true)
+      generateAIWelcome()
+    }
+  }, [])
+
+  const generateAIWelcome = async () => {
+    setAiLoading(true)
+    try {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_BASE}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'user',
+              content: 'Я только что заполнил профиль. Напиши ОЧЕНЬ коротко (максимум 2-3 предложения). НЕ перечисляй мой профиль, я его и так знаю. Просто скажи "Привет" и сразу назови 1-2 конкретных курса или активности с платформы, которые идеально мне подходят. Без лишней воды и длинных списков.'
+            }
+          ]
+        })
+      })
+      if (!res.ok) throw new Error('API Error')
+      const data = await res.json()
+      setAiMessage(data.reply)
+    } catch (err) {
+      setAiMessage('Привет! Твой профиль отлично выглядит. Рекомендую начать с каталога курсов и олимпиад ниже!')
+    } finally {
+      setAiLoading(false)
+    }
+  }
 
   const startedCourses = courses
     .map((c) => {
@@ -54,30 +102,154 @@ export default function DashboardHome() {
   const completedCourses = startedCourses.filter((c) => c.pct === 100).length
   const activeCourses = startedCourses.filter((c) => c.pct < 100).length
 
-  const displayName = user?.name || profile?.name || 'Ученик'
+  const displayName = user?.name || profile?.name || t('common.student')
+
+  const profileMeta = profile
+    ? `${profile.grade} ${t('dh.gradeWord')} · ${(profile.interests || []).join(', ') || t('dh.noInterests')}`
+    : t('dh.fillProfilePrompt')
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+      {/* AI Welcome Banner */}
+      {showAIWelcome && (
+        <div className="mb-10 relative overflow-hidden bg-gradient-to-br from-indigo-900 via-brand-dark to-slate-900 rounded-[2rem] p-6 sm:p-10 shadow-2xl shadow-brand/20 text-white">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/20 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/3" />
+          
+          <button
+            onClick={() => setShowAIWelcome(false)}
+            className="absolute top-6 right-6 p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl transition-colors z-10"
+          >
+            <Icon name="close" className="text-[24px]" />
+          </button>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-light to-brand grid place-items-center shadow-lg shadow-brand/40 shrink-0">
+                <Icon name="auto_awesome" className="text-[28px] text-white" filled />
+              </div>
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Твой персональный план</h2>
+                <p className="text-indigo-200 font-medium mt-1">Mentoria Hub AI проанализировал твой профиль</p>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-5 gap-8">
+              {/* Левая колонка: Текст от ИИ */}
+              <div className="lg:col-span-2 flex flex-col h-full">
+                <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-white/10 h-full flex flex-col justify-center min-h-[200px]">
+                  {aiLoading ? (
+                    <div className="flex flex-col items-center justify-center text-white/70 gap-4">
+                      <div className="flex gap-2">
+                        <span className="w-3 h-3 rounded-full bg-brand-light animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <span className="w-3 h-3 rounded-full bg-brand-light animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <span className="w-3 h-3 rounded-full bg-brand-light animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                      <p className="text-sm font-medium animate-pulse text-center">Анализируем интересы и время...</p>
+                    </div>
+                  ) : (
+                    <div className="prose prose-sm sm:prose-base prose-invert max-w-none text-center sm:text-left">
+                      {aiMessage.split('\n').map((line, i) => {
+                        const cleanLine = line.replace(/\*\*(.*?)\*\*/g, '$1');
+                        if (!cleanLine.trim()) return null;
+                        return (
+                          <p key={i} className="mb-3 last:mb-0 leading-relaxed text-indigo-50 sm:text-lg font-medium">
+                            {cleanLine.startsWith('-') || cleanLine.startsWith('*') ? (
+                              <span className="flex gap-2 items-start justify-center sm:justify-start">
+                                <span className="text-brand-light font-bold mt-1">•</span>
+                                <span>{cleanLine.replace(/^[-*]\s*/, '')}</span>
+                              </span>
+                            ) : (
+                              cleanLine
+                            )}
+                          </p>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Правая колонка: Карточки с рекомендациями (Курсы и Активности) */}
+              <div className="lg:col-span-3">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <Icon name="rocket_launch" className="text-brand-light" filled /> 
+                  Рекомендуем начать с этого:
+                </h3>
+                
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {/* Показываем первый курс как рекомендацию */}
+                  {courses[0] && (
+                    <Link
+                      to={`/app/courses/${courses[0].id}`}
+                      className="group bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 p-5 hover:bg-white/20 transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300">Курс</span>
+                        <Icon name="play_circle" className="text-[20px] text-white/50 group-hover:text-white transition-colors" filled />
+                      </div>
+                      <h4 className="font-bold text-white mb-2">{courses[0].title}</h4>
+                      <p className="text-sm text-indigo-100/70 line-clamp-2">{courses[0].description}</p>
+                    </Link>
+                  )}
+                  
+                  {/* Показываем 1-2 топовые активности */}
+                  {recommendations.slice(0, 2).map((o) => (
+                    <Link
+                      key={o.id}
+                      to="/app/opportunities"
+                      className="group bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 p-5 hover:bg-white/20 transition-all duration-300"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand/30 text-brand-light border border-brand/50">
+                          {o.category}
+                        </span>
+                        <Icon name="arrow_forward" className="text-[20px] text-white/50 group-hover:text-white transition-colors group-hover:translate-x-1" />
+                      </div>
+                      <h4 className="font-bold text-white mb-2">{o.title}</h4>
+                      <p className={`text-xs font-medium ${urgencyColor(daysUntil(o.deadline))} drop-shadow-md`}>
+                        до {formatDate(o.deadline)}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+
+                {!aiLoading && (
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={() => setShowAIWelcome(false)}
+                      className="px-6 py-3 bg-brand hover:bg-brand-light text-white rounded-xl font-bold transition-colors shadow-lg shadow-brand/30 flex items-center gap-2 hover:scale-105 active:scale-95"
+                    >
+                      Начать обучение <Icon name="check_circle" className="text-[20px]" filled />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+
       {/* Welcome banner */}
       <div className="relative bg-gradient-to-r from-brand via-brand to-brand-dark text-white rounded-3xl p-6 sm:p-8 mb-8 overflow-hidden">
         <div className="absolute -top-16 -right-16 w-56 h-56 bg-white/10 rounded-full blur-2xl" />
         <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-brand-light/10 rounded-full blur-3xl" />
         <div className="relative">
-          <p className="text-brand-soft text-sm font-medium mb-1">Личный кабинет</p>
+          <p className="text-brand-soft text-sm font-medium mb-1">{t('dh.cabinet')}</p>
           <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">
-            Привет, {displayName}!
+            {t('dh.greeting').replace('{name}', displayName)}
           </h1>
           <p className="text-brand-soft text-sm sm:text-base max-w-lg">
-            {profile
-              ? `${profile.grade} класс · ${(profile.interests || []).join(', ') || 'интересы не выбраны'}`
-              : 'Заполни профиль, чтобы получить персональные рекомендации'}
+            {profileMeta}
           </p>
           {!profile && (
             <Link
               to="/onboarding"
               className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-xl bg-white dark:bg-slate-900 text-brand font-semibold text-sm hover:bg-brand-soft transition-colors shadow-lg shadow-brand/20"
             >
-              <Icon name="person_add" className="text-[20px]" /> Создать профиль
+              <Icon name="person_add" className="text-[20px]" /> {t('dh.createProfile')}
             </Link>
           )}
         </div>
@@ -85,16 +257,16 @@ export default function DashboardHome() {
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard icon="menu_book" label="Всего курсов" value={totalCourses} color="indigo" />
-        <StatCard icon="trending_up" label="В процессе" value={activeCourses} color="amber" />
-        <StatCard icon="check_circle" label="Завершено" value={completedCourses} color="emerald" />
-        <StatCard icon="bookmark" label="Сохранено" value={savedOps.length} color="purple" />
+        <StatCard icon="menu_book" label={t('dh.stat.total')} value={totalCourses} color="indigo" />
+        <StatCard icon="trending_up" label={t('dh.stat.active')} value={activeCourses} color="amber" />
+        <StatCard icon="check_circle" label={t('dh.stat.completed')} value={completedCourses} color="emerald" />
+        <StatCard icon="bookmark" label={t('dh.stat.saved')} value={savedOps.length} color="purple" />
       </div>
 
       {/* My courses */}
-      <Section title="Мои курсы" icon="play_lesson">
+      <Section title={t('dh.myCourses')} icon="play_lesson">
         {startedCourses.length === 0 ? (
-          <Empty text="Ты ещё не начал ни одного курса" link="/app/courses" linkText="Выбрать курс" />
+          <Empty text={t('dh.empty.courses')} link="/app/courses" linkText={t('dh.chooseCourse')} />
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {startedCourses.map((c) => (
@@ -114,12 +286,12 @@ export default function DashboardHome() {
                     <div>
                       <p className="font-bold text-slate-800 dark:text-white line-clamp-2 leading-tight">{c.title}</p>
                       <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                        {c.done} из {c.total} уроков
+                        {t('dh.lessonsProgress').replace('{done}', c.done).replace('{total}', c.total)}
                       </p>
                     </div>
                   </div>
                   <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5 mt-auto">
-                    <span>Прогресс</span>
+                    <span>{t('dh.progress')}</span>
                     <span className="font-semibold text-brand">{c.pct}%</span>
                   </div>
                   <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -131,13 +303,13 @@ export default function DashboardHome() {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    if (window.confirm('Сбросить весь прогресс и убрать этот курс из "Моих курсов"?')) {
+                    if (window.confirm(t('dh.resetConfirm'))) {
                       removeCourseProgress(c.id);
                       setRefresh(r => r + 1);
                     }
                   }}
                   className="absolute top-4 right-4 p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all z-10"
-                  title="Убрать из моих курсов"
+                  title={t('dh.removeFromMy')}
                 >
                   <Icon name="delete" className="text-[20px]" filled />
                 </button>
@@ -147,40 +319,19 @@ export default function DashboardHome() {
         )}
       </Section>
 
-      {/* Deadlines */}
-      <Section title="Ближайшие дедлайны" icon="event">
-        {upcoming.length === 0 ? (
-          <Empty text="Нет предстоящих дедлайнов" link="/app/opportunities" linkText="Открыть каталог" />
-        ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm divide-y divide-slate-50">
-            {upcoming.map((o) => {
-              const days = daysUntil(o.deadline)
-              return (
-                <div key={o.id} className="flex items-center gap-4 p-4 hover:bg-slate-50/50 transition-colors">
-                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${urgencyDot(days)}`} />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-800 dark:text-white truncate">{o.title}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">{o.category}</p>
-                  </div>
-                  <div className={`text-right text-sm font-semibold ${urgencyColor(days)}`}>
-                    <p>{formatDate(o.deadline)}</p>
-                    <p className="text-xs">осталось {days} дн.</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+      {/* Calendar */}
+      <Section title={t('dh.calendar')} icon="calendar_month">
+        <EventCalendar opportunities={allOps} />
       </Section>
 
       {/* Recommendations */}
       <Section
-        title="Рекомендации для тебя"
+        title={t('dh.recommendations')}
         icon="auto_awesome"
         subtitle={
           interests.length
-            ? `На основе интересов: ${interests.join(', ')}`
-            : 'Заполни профиль для точных рекомендаций'
+            ? t('dh.recoBasedOn').replace('{interests}', interests.join(', '))
+            : t('dh.recoFillProfile')
         }
       >
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -198,14 +349,14 @@ export default function DashboardHome() {
                       categoryColors[o.category] || 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
-                    {o.category}
+                    {t('cat.' + o.category)}
                   </span>
                   <Icon name="auto_awesome" className="text-[18px] text-brand group-hover:rotate-12 transition-transform" filled />
                 </div>
                 <h4 className="font-bold text-slate-800 dark:text-white mb-2">{o.title}</h4>
                 <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-3">{o.description}</p>
                 <p className={`text-xs font-medium ${urgencyColor(days)}`}>
-                  до {formatDate(o.deadline)}
+                  {t('dh.until')} {formatDate(o.deadline)}
                 </p>
               </Link>
             )

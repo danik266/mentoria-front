@@ -6,19 +6,22 @@ import ActivityFlashcards from '../components/ActivityFlashcards'
 import ActivityMatch from '../components/ActivityMatch'
 import ActivityQuiz from '../components/ActivityQuiz'
 import ActivityVideo from '../components/ActivityVideo'
+import { useLanguage } from '../contexts/LanguageContext'
+import AILessonTutor from '../components/AILessonTutor'
 import { getCourses, isLessonComplete, completeLesson, getLessons, startCourse } from '../utils/storage'
 
 const ACTIVITY_META = {
-  read:       { icon: 'menu_book',  label: 'Теория',       color: 'indigo' },
-  flashcards: { icon: 'style',      label: 'Флэшкарты',    color: 'purple' },
-  match:      { icon: 'link',       label: 'Совпадение',   color: 'amber'  },
-  quiz:       { icon: 'quiz',       label: 'Тест',         color: 'rose'   },
-  video:      { icon: 'play_circle',label: 'Видео',        color: 'blue'   },
+  read:       { icon: 'menu_book',  labelKey: 'activity.read',       color: 'indigo' },
+  flashcards: { icon: 'style',      labelKey: 'activity.flashcards', color: 'purple' },
+  match:      { icon: 'link',       labelKey: 'activity.match',      color: 'amber'  },
+  quiz:       { icon: 'quiz',       labelKey: 'activity.quiz',       color: 'rose'   },
+  video:      { icon: 'play_circle',labelKey: 'activity.video',      color: 'blue'   },
 }
 
 export default function Lesson() {
   const { id, lessonId } = useParams()
   const navigate = useNavigate()
+  const { t } = useLanguage()
 
   const course = useMemo(() => getCourses().find((c) => c.id === id), [id])
   const lessonsMap = useMemo(() => getLessons(), [])
@@ -36,16 +39,16 @@ export default function Lesson() {
     if (lesson.activities && lesson.activities.length > 0) return lesson.activities
     const acts = []
     if (lesson.video_url) {
-      acts.push({ type: 'video', title: 'Видеоурок', url: lesson.video_url })
+      acts.push({ type: 'video', title: t('activity.videoLesson'), url: lesson.video_url })
     }
     if (lesson.content && lesson.content.length > 0) {
-      acts.push({ type: 'read', title: 'Теория', content: lesson.content })
+      acts.push({ type: 'read', title: t('activity.read'), content: lesson.content })
     }
     if (lesson.quiz && lesson.quiz.length > 0) {
-      acts.push({ type: 'quiz', title: 'Мини-тест', questions: lesson.quiz })
+      acts.push({ type: 'quiz', title: t('activity.miniTest'), questions: lesson.quiz })
     }
     return acts
-  }, [lesson])
+  }, [lesson, t])
 
   const [step, setStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState(() =>
@@ -66,9 +69,9 @@ export default function Lesson() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
-        <p className="text-slate-500 dark:text-slate-400 mb-4">Урок не найден или недоступен</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">{t('lesson.notFound')}</p>
         <Link to={`/app/courses/${id}`} className="text-brand font-semibold hover:underline">
-          ← Вернуться к курсу
+          {t('lesson.backToCourse')}
         </Link>
       </div>
     )
@@ -131,7 +134,7 @@ export default function Lesson() {
           {/* Lesson list */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4">
             <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3 px-1">
-              Уроки курса
+              {t('lesson.courseLessons')}
             </p>
             <nav className="space-y-1">
               {courseLessons.map((l, i) => {
@@ -167,7 +170,7 @@ export default function Lesson() {
           {activities.length > 0 && (
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-4">
               <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3 px-1">
-                Шаги урока
+                {t('lesson.steps')}
               </p>
               <div className="space-y-1">
                 {activities.map((act, i) => {
@@ -194,7 +197,7 @@ export default function Lesson() {
                           : <Icon name={meta.icon} className="text-[14px]" />
                         }
                       </span>
-                      <span className="text-xs line-clamp-1">{meta.label}</span>
+                      <span className="text-xs line-clamp-1">{t(meta.labelKey)}</span>
                     </button>
                   )
                 })}
@@ -209,11 +212,11 @@ export default function Lesson() {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6 mb-6">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm text-slate-400 dark:text-slate-500">
-                Урок {lessonIndex + 1} из {courseLessons.length}
+                {t('lesson.lessonOf').replace('{n}', lessonIndex + 1).replace('{total}', courseLessons.length)}
               </p>
               {passed && (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 text-sm font-semibold">
-                  <Icon name="check_circle" className="text-[18px]" filled /> Пройден
+                  <Icon name="check_circle" className="text-[18px]" filled /> {t('lesson.passed')}
                 </span>
               )}
             </div>
@@ -240,7 +243,7 @@ export default function Lesson() {
                       }`}
                     >
                       <Icon name={done ? 'check' : meta.icon} className="text-[14px]" filled={done} />
-                      {meta.label}
+                      {t(meta.labelKey)}
                     </button>
                   )
                 })}
@@ -295,7 +298,7 @@ export default function Lesson() {
                 {/* Old quiz fallback */}
                 {lesson.quiz?.length > 0 && (
                   <ActivityQuiz
-                    activity={{ title: 'Мини-тест', questions: lesson.quiz.map(q => ({ ...q, options: q.options })) }}
+                    activity={{ title: t('activity.miniTest'), questions: lesson.quiz.map(q => ({ ...q, options: q.options })) }}
                     onComplete={() => { completeLesson(id, lessonId) }}
                   />
                 )}
@@ -303,34 +306,43 @@ export default function Lesson() {
             )}
           </div>
 
+          {/* AI Lesson Tutor */}
+          {lesson.content && lesson.content.length > 0 && (
+            <AILessonTutor
+              lessonTitle={lesson.title}
+              courseTitle={course.title}
+              content={lesson.content}
+            />
+          )}
+
           {/* Passed + navigation */}
           {passed && (
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6">
               {isLast ? (
                 <div className="bg-gradient-to-br from-brand to-brand-dark text-white rounded-2xl p-6 text-center">
                   <Icon name="celebration" className="text-[34px] mb-1" filled />
-                  <p className="text-xl font-extrabold mb-1">Курс завершён!</p>
+                  <p className="text-xl font-extrabold mb-1">{t('lesson.courseDone')}</p>
                   <p className="text-white/80 text-sm mb-5">
-                    Ты прошёл все уроки курса «{course.title}»
+                    {t('lesson.courseDoneDesc').replace('{title}', course.title)}
                   </p>
                   <Link
                     to={`/certificate/${id}`}
                     className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white dark:bg-slate-900 text-brand-dark font-bold hover:bg-brand-soft transition-colors shadow-lg"
                   >
-                    <Icon name="workspace_premium" className="text-[22px]" filled /> Получить сертификат
+                    <Icon name="workspace_premium" className="text-[22px]" filled /> {t('lesson.getCertificate')}
                   </Link>
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-semibold text-slate-800 dark:text-white">Урок пройден!</p>
-                    <p className="text-sm text-slate-400 dark:text-slate-500">Готов к следующему?</p>
+                    <p className="font-semibold text-slate-800 dark:text-white">{t('lesson.lessonDone')}</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500">{t('lesson.readyNext')}</p>
                   </div>
                   <button
                     onClick={goNext}
                     className="px-6 py-3 rounded-xl bg-brand text-white font-semibold hover:bg-brand-dark transition-colors flex items-center gap-2"
                   >
-                    Следующий урок <Icon name="arrow_forward" className="text-[20px]" />
+                    {t('lesson.nextLesson')} <Icon name="arrow_forward" className="text-[20px]" />
                   </button>
                 </div>
               )}

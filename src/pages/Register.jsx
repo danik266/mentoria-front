@@ -4,6 +4,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, User } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import LanguageSwitcher from '../components/LanguageSwitcher';
+import { useLanguage } from '../contexts/LanguageContext';
 import { API_BASE } from '../utils/api';
 
 export default function Register() {
@@ -12,6 +14,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -26,15 +29,15 @@ export default function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success('Код подтверждения отправлен на почту!');
+        toast.success(t('register.codeSent'));
         setTimeout(() => {
           navigate('/confirm-email', { state: { email } });
         }, 1500);
       } else {
-        toast.error(data.detail || 'Не удалось зарегистрироваться');
+        toast.error(data.detail || t('register.failed'));
       }
     } catch (err) {
-      toast.error('Ошибка сети. Проверьте, запущен ли бэкенд.');
+      toast.error(t('common.networkError'));
     } finally {
       setLoading(false);
     }
@@ -46,14 +49,17 @@ export default function Register() {
   return (
     <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center mb-8">
           <Logo to="/" size="lg" />
         </div>
-        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">Создать аккаунт</h2>
+        <h2 className="text-center text-3xl font-extrabold text-slate-900 dark:text-white">{t('register.title')}</h2>
         <p className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
-          Присоединяйся и начни учиться уже сегодня
+          {t('register.subtitle')}
         </p>
       </div>
 
@@ -61,15 +67,15 @@ export default function Register() {
         <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur py-8 px-6 sm:px-10 shadow-xl shadow-slate-900/5 rounded-3xl border border-slate-100 dark:border-slate-800">
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Имя</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('register.name')}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className={field} placeholder="Айдана Серик" />
+                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} className={field} placeholder={t('register.namePlaceholder')} />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('common.email')}</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={field} placeholder="you@example.com" />
@@ -77,7 +83,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Пароль</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('common.password')}</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className={field} placeholder="••••••••" minLength={6} />
@@ -89,15 +95,15 @@ export default function Register() {
               disabled={loading}
               className="w-full flex justify-center py-3 px-4 rounded-xl text-sm font-bold text-white bg-brand hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand disabled:opacity-50 transition-all transform hover:-translate-y-0.5"
             >
-              {loading ? 'Создаём аккаунт…' : 'Зарегистрироваться'}
+              {loading ? t('register.submitting') : t('register.submit')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Уже есть аккаунт?{' '}
+              {t('register.haveAccount')}{' '}
               <Link to="/login" className="font-semibold text-brand hover:text-brand-dark transition-colors">
-                Войти
+                {t('register.signin')}
               </Link>
             </p>
           </div>

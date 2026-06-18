@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react'
 import Icon from '../components/Icon'
 import OpportunityCard from '../components/OpportunityCard'
+import { useLanguage } from '../contexts/LanguageContext'
 import { categories, formats, categoryColors } from '../data/mock'
 import { getOpportunities, formatDate, daysUntil, isSaved, toggleSaved } from '../utils/storage'
 
 const grades = [8, 9, 10, 11]
 
 export default function Opportunities() {
+  const { t } = useLanguage()
   const allOps = useMemo(() => getOpportunities(), [])
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('all')
@@ -32,7 +34,7 @@ export default function Opportunities() {
     setFormat('all')
   }
 
-  const FilterGroup = ({ label, value, setValue, options }) => (
+  const FilterGroup = ({ label, value, setValue, options, labelFn }) => (
     <div>
       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">{label}</p>
       <div className="flex flex-wrap gap-2">
@@ -42,7 +44,7 @@ export default function Opportunities() {
             value === 'all' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
           }`}
         >
-          Все
+          {t('opp.all')}
         </button>
         {options.map((o) => (
           <button
@@ -54,7 +56,7 @@ export default function Opportunities() {
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
             }`}
           >
-            {o}
+            {labelFn ? labelFn(o) : o}
           </button>
         ))}
       </div>
@@ -64,9 +66,9 @@ export default function Opportunities() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
       <div className="mb-5 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">Каталог возможностей</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">{t('opp.title')}</h1>
         <p className="text-slate-600 dark:text-slate-300 mt-1.5 sm:mt-2">
-          {filtered.length} из {allOps.length} возможностей подходят под фильтры
+          {t('opp.matchCount').replace('{n}', filtered.length).replace('{total}', allOps.length)}
         </p>
       </div>
 
@@ -79,7 +81,7 @@ export default function Opportunities() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Поиск по названию…"
+          placeholder={t('opp.searchPlaceholder')}
           className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
       </div>
@@ -89,15 +91,15 @@ export default function Opportunities() {
         <aside className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5 h-fit space-y-5 lg:sticky lg:top-20">
           <div className="flex items-center justify-between">
             <h2 className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-              <Icon name="tune" className="text-[20px]" /> Фильтры
+              <Icon name="tune" className="text-[20px]" /> {t('opp.filters')}
             </h2>
             <button onClick={reset} className="text-xs text-primary font-semibold hover:underline">
-              Сбросить
+              {t('opp.reset')}
             </button>
           </div>
-          <FilterGroup label="Категория" value={category} setValue={setCategory} options={categories} />
-          <FilterGroup label="Класс" value={grade} setValue={setGrade} options={grades} />
-          <FilterGroup label="Формат" value={format} setValue={setFormat} options={formats} />
+          <FilterGroup label={t('opp.category')} value={category} setValue={setCategory} options={categories} labelFn={(o) => t('cat.' + o)} />
+          <FilterGroup label={t('opp.grade')} value={grade} setValue={setGrade} options={grades} />
+          <FilterGroup label={t('opp.format')} value={format} setValue={setFormat} options={formats} labelFn={(o) => t('fmt.' + o)} />
         </aside>
 
         {/* Сетка карточек */}
@@ -105,7 +107,7 @@ export default function Opportunities() {
           {filtered.length === 0 ? (
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-12 text-center text-slate-500 dark:text-slate-400">
               <Icon name="search_off" className="text-[48px] text-slate-300 mb-3" />
-              <p>Ничего не найдено. Попробуйте изменить фильтры.</p>
+              <p>{t('opp.notFound')}</p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
@@ -135,6 +137,7 @@ export default function Opportunities() {
 }
 
 function DetailsModal({ op, onClose, onToggleSave }) {
+  const { t } = useLanguage()
   const [saved, setSaved] = useState(isSaved(op.id))
   const days = daysUntil(op.deadline)
   const urgent = days < 7
@@ -158,7 +161,7 @@ function DetailsModal({ op, onClose, onToggleSave }) {
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-3 mb-4">
             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${badge}`}>
-              {op.category}
+              {t('cat.' + op.category)}
             </span>
             <button onClick={onClose} className="text-slate-400 dark:text-slate-500 hover:text-slate-600">
               <Icon name="close" className="text-[24px]" />
@@ -169,25 +172,25 @@ function DetailsModal({ op, onClose, onToggleSave }) {
 
           <div className={`flex items-center gap-1.5 font-medium mb-5 ${urgent ? 'text-red-600' : 'text-slate-500 dark:text-slate-400'}`}>
             <Icon name="schedule" className="text-[20px]" />
-            Дедлайн: до {formatDate(op.deadline)}
-            {days >= 0 ? ` (осталось ${days} дн.)` : ' (завершено)'}
+            {t('opp.deadlinePrefix')} {formatDate(op.deadline)}
+            {days >= 0 ? ` ${t('opp.daysLeft').replace('{n}', days)}` : ` ${t('opp.finished')}`}
           </div>
 
           <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-5">{op.description}</p>
 
           <div className="grid grid-cols-2 gap-3 mb-5">
             <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3">
-              <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Классы</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t('opp.grades')}</p>
               <p className="font-semibold text-slate-700 dark:text-slate-200">{op.grades.join(', ')}</p>
             </div>
             <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl p-3">
-              <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Формат</p>
-              <p className="font-semibold text-slate-700 dark:text-slate-200">{op.format}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">{t('opp.format')}</p>
+              <p className="font-semibold text-slate-700 dark:text-slate-200">{t('fmt.' + op.format)}</p>
             </div>
           </div>
 
           <div className="bg-sky-soft rounded-xl p-4 mb-6">
-            <p className="text-xs text-primary font-semibold mb-1">Требования</p>
+            <p className="text-xs text-primary font-semibold mb-1">{t('opp.requirements')}</p>
             <p className="text-sm text-slate-700 dark:text-slate-200">{op.requirements}</p>
           </div>
 
@@ -201,13 +204,13 @@ function DetailsModal({ op, onClose, onToggleSave }) {
               }`}
             >
               <Icon name="favorite" className="text-[20px]" filled={saved} />
-              {saved ? 'Сохранено' : 'Сохранить'}
+              {saved ? t('opp.saved') : t('opp.save')}
             </button>
             <button
               onClick={onClose}
               className="flex-1 py-3 rounded-xl font-semibold bg-primary text-white hover:bg-primary-dark transition-colors"
             >
-              Закрыть
+              {t('opp.close')}
             </button>
           </div>
         </div>

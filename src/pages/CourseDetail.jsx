@@ -1,11 +1,13 @@
 import { useMemo } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
+import { useLanguage } from '../contexts/LanguageContext'
 import { getCourses, isLessonComplete, completedCount, getLessons, startCourse, isCourseStarted } from '../utils/storage'
 
 export default function CourseDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const course = useMemo(() => getCourses().find((c) => c.id === id), [id])
   const lessons = useMemo(() => getLessons(), [])
   const courseLessons = lessons[id] || []
@@ -14,9 +16,9 @@ export default function CourseDetail() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <Icon name="error_outline" className="text-[48px] text-slate-300 mb-3" />
-        <p className="text-slate-500 dark:text-slate-400 mb-4">Курс не найден</p>
+        <p className="text-slate-500 dark:text-slate-400 mb-4">{t('cd.notFound')}</p>
         <Link to="/app/courses" className="text-primary font-semibold hover:underline">
-          ← К списку курсов
+          {t('cd.toCoursesList')}
         </Link>
       </div>
     )
@@ -45,7 +47,7 @@ export default function CourseDetail() {
         to="/app/courses"
         className="inline-flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-primary mb-6"
       >
-        <Icon name="arrow_back" className="text-[18px]" /> К курсам
+        <Icon name="arrow_back" className="text-[18px]" /> {t('cd.toCourses')}
       </Link>
 
       {/* Заголовок */}
@@ -75,7 +77,7 @@ export default function CourseDetail() {
         <div className="relative mt-6 max-w-md">
           <div className="flex justify-between text-sm mb-1">
             <span>
-              Пройдено {done} из {total}
+              {t('cd.completedOf').replace('{done}', done).replace('{total}', total)}
             </span>
             <span className="font-semibold">{pct}%</span>
           </div>
@@ -86,7 +88,7 @@ export default function CourseDetail() {
       </div>
 
       {/* Список уроков */}
-      <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4">Программа курса</h2>
+      <h2 className="text-xl font-bold text-slate-800 dark:text-white mb-4">{t('cd.program')}</h2>
       <div className="space-y-3 mb-8">
         {courseLessons.map((lesson, index) => {
           const status = statusOf(lesson, index)
@@ -126,14 +128,14 @@ export default function CourseDetail() {
               </span>
               <div className="flex-1">
                 <p className="font-semibold text-slate-800 dark:text-white">
-                  Урок {index + 1}. {lesson.title}
+                  {t('cd.lessonWord')} {index + 1}. {lesson.title}
                 </p>
                 <p className="text-xs text-slate-400 dark:text-slate-500">
                   {status === 'done'
-                    ? 'Пройден'
+                    ? t('cd.status.done')
                     : status === 'current'
-                    ? 'Доступен сейчас'
-                    : 'Заблокирован'}
+                    ? t('cd.status.current')
+                    : t('cd.status.locked')}
                 </p>
               </div>
               {clickable && <Icon name="chevron_right" className="text-[22px] text-slate-300" />}
@@ -149,7 +151,7 @@ export default function CourseDetail() {
         className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors"
       >
         <Icon name="play_arrow" className="text-[22px]" filled />
-        {started ? 'Продолжить курс' : 'Начать курс'}
+        {started ? t('cd.continueCourse') : t('cd.startCourse')}
       </Link>
     </div>
   )

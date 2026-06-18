@@ -39,7 +39,7 @@ export default function Admin() {
   const login = async (e) => {
     e.preventDefault()
     if (adminCode !== 'admin123') {
-      setErrorText('Неверный секретный код администратора')
+      setErrorText(t('admin.login.errCode'))
       return
     }
     setErrorText('')
@@ -63,14 +63,14 @@ export default function Admin() {
           setAnalytics(analyticsData)
           setAuthed(true)
         } else {
-          setErrorText('Ошибка: У этого аккаунта нет прав администратора')
+          setErrorText(t('admin.login.errNoRights'))
           localStorage.removeItem('token')
         }
       } else {
-        setErrorText(data.detail || 'Неверный email или пароль')
+        setErrorText(data.detail || t('admin.login.errCreds'))
       }
     } catch (err) {
-      setErrorText('Ошибка сети. Проверьте, запущен ли бэкенд.')
+      setErrorText(t('common.networkError'))
     }
   }
 
@@ -110,7 +110,7 @@ export default function Admin() {
   }
   
   const deleteOp = async (id) => {
-    if (!confirm('Удалить эту возможность?')) return
+    if (!confirm(t('admin.confirmDeleteOp'))) return
     try {
       const token = localStorage.getItem('token')
       const res = await fetch(`${API_BASE}/api/admin/opportunities/${id}`, {
@@ -122,11 +122,11 @@ export default function Admin() {
       if (res.ok) {
         persistOps(ops.filter((o) => o.id !== id))
       } else {
-        alert('Ошибка при удалении возможности из БД')
+        alert(t('admin.errDeleteOp'))
       }
     } catch (e) {
       console.error(e)
-      alert('Ошибка соединения с сервером')
+      alert(t('admin.errConnection'))
     }
   }
 
@@ -149,11 +149,11 @@ export default function Admin() {
         persistOps(nextList)
         setOpModal(null)
       } else {
-        alert('Ошибка при сохранении возможности в БД')
+        alert(t('admin.errSaveOp'))
       }
     } catch (e) {
       console.error(e)
-      alert('Ошибка соединения с сервером')
+      alert(t('admin.errConnection'))
     }
   }
 
@@ -164,7 +164,7 @@ export default function Admin() {
   }
 
   const deleteCourse = async (id) => {
-    if (!confirm('Удалить этот курс?')) return
+    if (!confirm(t('admin.confirmDeleteCourse'))) return
     try {
       const token = localStorage.getItem('token')
       const res = await fetch(`${API_BASE}/api/admin/courses/${id}`, {
@@ -181,11 +181,11 @@ export default function Admin() {
         delete lessonsMap[id]
         saveLessons(lessonsMap)
       } else {
-        alert('Ошибка при удалении курса из БД')
+        alert(t('admin.errDeleteCourse'))
       }
     } catch (e) {
       console.error(e)
-      alert('Ошибка соединения с сервером')
+      alert(t('admin.errConnection'))
     }
   }
 
@@ -222,11 +222,11 @@ export default function Admin() {
 
         setCourseModal(null)
       } else {
-        alert('Ошибка при сохранении курса в БД')
+        alert(t('admin.errSaveCourse'))
       }
     } catch (e) {
       console.error(e)
-      alert('Ошибка соединения с сервером')
+      alert(t('admin.errConnection'))
     }
   }
 
@@ -355,12 +355,12 @@ export default function Admin() {
       {tab === 'opportunities' && (
         <div>
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <p className="text-slate-500 dark:text-slate-400 text-sm">{ops.length} возможностей</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('admin.opp.count').replace('{n}', ops.length)}</p>
             <button
               onClick={() => setOpModal({})}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-emerald-600 transition-colors"
             >
-              <Icon name="add" className="text-[20px]" /> Добавить возможность
+              <Icon name="add" className="text-[20px]" /> {t('admin.opp.add')}
             </button>
           </div>
 
@@ -368,33 +368,33 @@ export default function Admin() {
             <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
-                  <th className="px-4 py-3 font-medium">Название</th>
-                  <th className="px-4 py-3 font-medium">Категория</th>
-                  <th className="px-4 py-3 font-medium">Дедлайн</th>
-                  <th className="px-4 py-3 font-medium">Формат</th>
-                  <th className="px-4 py-3 font-medium text-right">Действия</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.th.title')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.th.category')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.th.deadline')}</th>
+                  <th className="px-4 py-3 font-medium">{t('admin.th.format')}</th>
+                  <th className="px-4 py-3 font-medium text-right">{t('admin.th.actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {ops.map((o) => (
                   <tr key={o.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-semibold text-slate-800 dark:text-white">{o.title}</td>
-                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{o.category}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{t('cat.' + o.category)}</td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{formatDate(o.deadline)}</td>
-                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{o.format}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{t('fmt.' + o.format)}</td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={() => setOpModal(o)}
                           className="p-2 rounded-lg text-primary hover:bg-sky-soft"
-                          title="Редактировать"
+                          title={t('admin.edit')}
                         >
                           <Icon name="edit" className="text-[20px]" />
                         </button>
                         <button
                           onClick={() => deleteOp(o.id)}
                           className="p-2 rounded-lg text-red-500 hover:bg-red-50"
-                          title="Удалить"
+                          title={t('admin.delete')}
                         >
                           <Icon name="delete" className="text-[20px]" />
                         </button>
@@ -412,7 +412,7 @@ export default function Admin() {
       {tab === 'courses' && (
         <div>
           <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-            <p className="text-slate-500 dark:text-slate-400 text-sm">{crs.length} курсов</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('admin.crs.count').replace('{n}', crs.length)}</p>
             <button
               onClick={() => {
                 const lessonsMap = getLessons()
@@ -420,7 +420,7 @@ export default function Admin() {
               }}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-emerald-600 transition-colors"
             >
-              <Icon name="add" className="text-[20px]" /> Добавить курс
+              <Icon name="add" className="text-[20px]" /> {t('admin.crs.add')}
             </button>
           </div>
 
@@ -440,20 +440,20 @@ export default function Admin() {
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-slate-800 dark:text-white">{c.title}</p>
                     <p className="text-xs text-slate-400 dark:text-slate-500">
-                      {c.level} · {courseLessons.length} уроков
+                      {c.level} · {t('admin.crs.lessonsCount').replace('{n}', courseLessons.length)}
                     </p>
                   </div>
                   <button
                     onClick={() => setCourseModal({ ...c, lessons: courseLessons })}
                     className="p-2 rounded-lg text-primary hover:bg-sky-soft"
-                    title="Редактировать"
+                    title={t('admin.edit')}
                   >
                     <Icon name="edit" className="text-[20px]" />
                   </button>
                   <button
                     onClick={() => deleteCourse(c.id)}
                     className="p-2 rounded-lg text-red-500 hover:bg-red-50"
-                    title="Удалить"
+                    title={t('admin.delete')}
                   >
                     <Icon name="delete" className="text-[20px]" />
                   </button>
@@ -470,7 +470,7 @@ export default function Admin() {
           {loadingAnalytics ? (
             <div className="text-center py-20 text-slate-400 dark:text-slate-500">
               <Icon name="cached" className="animate-spin text-[40px] mb-2" />
-              <p>Загрузка статистики...</p>
+              <p>{t('admin.an.loading')}</p>
             </div>
           ) : analytics ? (
             <div>
@@ -481,21 +481,21 @@ export default function Admin() {
                     <Icon name="groups" className="text-[24px]" />
                   </div>
                   <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.total_students}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Всего учеников зарегистрировано</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('admin.an.totalStudents')}</p>
                 </div>
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
                   <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl grid place-items-center mb-3">
                     <Icon name="how_to_reg" className="text-[24px]" />
                   </div>
                   <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.active_students}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Активных (начали хоть 1 курс)</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('admin.an.activeStudents')}</p>
                 </div>
                 <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-2xl shadow-sm">
                   <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl grid place-items-center mb-3">
                     <Icon name="done_all" className="text-[24px]" />
                   </div>
                   <p className="text-3xl font-extrabold text-slate-800 dark:text-white">{analytics.total_completed_lessons}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Всего пройдено уроков тестов</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('admin.an.completedLessons')}</p>
                 </div>
               </div>
 
@@ -503,16 +503,16 @@ export default function Admin() {
                 {/* Список учеников */}
                 <div className="lg:col-span-2">
                   <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <Icon name="school" className="text-primary text-[22px]" /> Ученики
+                    <Icon name="school" className="text-primary text-[22px]" /> {t('admin.an.students')}
                   </h3>
                   <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm overflow-x-auto">
                     <table className="w-full min-w-[600px] text-sm">
                       <thead>
                         <tr className="text-left text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800">
-                          <th className="px-4 py-3 font-medium">Имя</th>
-                          <th className="px-4 py-3 font-medium">Класс</th>
-                          <th className="px-4 py-3 font-medium">Тестов пройдено</th>
-                          <th className="px-4 py-3 font-medium text-right">Детали</th>
+                          <th className="px-4 py-3 font-medium">{t('admin.an.thName')}</th>
+                          <th className="px-4 py-3 font-medium">{t('admin.an.thGrade')}</th>
+                          <th className="px-4 py-3 font-medium">{t('admin.an.thTests')}</th>
+                          <th className="px-4 py-3 font-medium text-right">{t('admin.an.thDetails')}</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -522,14 +522,14 @@ export default function Admin() {
                               <p className="font-semibold text-slate-800 dark:text-white">{s.name}</p>
                               <p className="text-xs text-slate-400 dark:text-slate-500">{s.email}</p>
                             </td>
-                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{s.grade} класс</td>
+                            <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{s.grade} {t('admin.an.gradeSuffix')}</td>
                             <td className="px-4 py-3 font-medium text-brand">{s.completed_lessons}</td>
                             <td className="px-4 py-3 text-right">
                               <button
                                 onClick={() => setStudentDetail(s)}
                                 className="px-3 py-1.5 rounded-lg bg-sky-soft text-primary font-semibold text-xs hover:bg-brand-soft transition-colors"
                               >
-                                Прогресс
+                                {t('admin.an.progress')}
                               </button>
                             </td>
                           </tr>
@@ -542,15 +542,15 @@ export default function Admin() {
                 {/* Статистика по курсам */}
                 <div>
                   <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                    <Icon name="analytics" className="text-primary text-[22px]" /> Популярность курсов
+                    <Icon name="analytics" className="text-primary text-[22px]" /> {t('admin.an.coursePopularity')}
                   </h3>
                   <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4">
                     {analytics.courses.map((c) => (
                       <div key={c.id} className="border-b border-slate-50 pb-3 last:border-0 last:pb-0">
                         <p className="font-semibold text-slate-800 dark:text-white text-sm mb-1">{c.title}</p>
                         <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
-                          <span>Учеников начали: {c.started_students}</span>
-                          <span>Завершили: {c.completed_students}</span>
+                          <span>{t('admin.an.started').replace('{n}', c.started_students)}</span>
+                          <span>{t('admin.an.completed').replace('{n}', c.completed_students)}</span>
                         </div>
                         {/* Небольшой прогресс-бар */}
                         <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
@@ -568,7 +568,7 @@ export default function Admin() {
               </div>
             </div>
           ) : (
-            <div className="text-center py-20 text-slate-400 dark:text-slate-500">Ошибка при получении аналитики</div>
+            <div className="text-center py-20 text-slate-400 dark:text-slate-500">{t('admin.an.error')}</div>
           )}
         </div>
       )}
@@ -588,6 +588,7 @@ export default function Admin() {
 
 // ---------- Форма возможности ----------
 function OpportunityForm({ initial, onSave, onClose }) {
+  const { t } = useLanguage()
   const [form, setForm] = useState({
     id: initial.id,
     title: initial.title || '',
@@ -624,9 +625,9 @@ function OpportunityForm({ initial, onSave, onClose }) {
   }
 
   return (
-    <Modal title={form.id ? 'Редактировать возможность' : 'Новая возможность'} onClose={onClose}>
+    <Modal title={form.id ? t('admin.opf.editTitle') : t('admin.opf.newTitle')} onClose={onClose}>
       <form onSubmit={submit} className="space-y-4">
-        <Field label="Название">
+        <Field label={t('admin.opf.title')}>
           <input
             required
             value={form.title}
@@ -635,23 +636,23 @@ function OpportunityForm({ initial, onSave, onClose }) {
           />
         </Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Категория">
+          <Field label={t('admin.opf.category')}>
             <select value={form.category} onChange={(e) => set('category', e.target.value)} className="input">
               {categories.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>{t('cat.' + c)}</option>
               ))}
             </select>
           </Field>
-          <Field label="Формат">
+          <Field label={t('admin.opf.format')}>
             <select value={form.format} onChange={(e) => set('format', e.target.value)} className="input">
               {formats.map((f) => (
-                <option key={f}>{f}</option>
+                <option key={f} value={f}>{t('fmt.' + f)}</option>
               ))}
             </select>
           </Field>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Дедлайн">
+          <Field label={t('admin.opf.deadline')}>
             <input
               type="date"
               required
@@ -660,7 +661,7 @@ function OpportunityForm({ initial, onSave, onClose }) {
               className="input"
             />
           </Field>
-          <Field label="Классы (через запятую)">
+          <Field label={t('admin.opf.grades')}>
             <input
               value={form.grades}
               onChange={(e) => set('grades', e.target.value)}
@@ -669,7 +670,7 @@ function OpportunityForm({ initial, onSave, onClose }) {
             />
           </Field>
         </div>
-        <Field label="Описание">
+        <Field label={t('admin.opf.description')}>
           <textarea
             value={form.description}
             onChange={(e) => set('description', e.target.value)}
@@ -677,14 +678,14 @@ function OpportunityForm({ initial, onSave, onClose }) {
             className="input resize-none"
           />
         </Field>
-        <Field label="Требования">
+        <Field label={t('admin.opf.requirements')}>
           <input
             value={form.requirements}
             onChange={(e) => set('requirements', e.target.value)}
             className="input"
           />
         </Field>
-        <Field label="Теги (через запятую)">
+        <Field label={t('admin.opf.tags')}>
           <input
             value={form.tags}
             onChange={(e) => set('tags', e.target.value)}
@@ -700,6 +701,7 @@ function OpportunityForm({ initial, onSave, onClose }) {
 
 // ---------- Форма курса + редактор уроков ----------
 function CourseForm({ initial, onSave, onClose }) {
+  const { t } = useLanguage()
   const [form, setForm] = useState({
     id: initial.id,
     title: initial.title || '',
@@ -760,7 +762,7 @@ function CourseForm({ initial, onSave, onClose }) {
   }
 
   const deleteLesson = (index) => {
-    if (confirm('Удалить этот урок?')) {
+    if (confirm(t('admin.crf.confirmDeleteLesson'))) {
       setLessons(lessons.filter((_, i) => i !== index))
       if (activeLessonIndex === index) {
         setActiveLessonIndex(null)
@@ -800,12 +802,12 @@ function CourseForm({ initial, onSave, onClose }) {
   }
 
   return (
-    <Modal title={form.id ? 'Редактировать курс' : 'Новый курс'} onClose={onClose}>
+    <Modal title={form.id ? t('admin.crf.editTitle') : t('admin.crf.newTitle')} onClose={onClose}>
       {lessonForm !== null ? (
         /* РЕДАКТОР КОНКРЕТНОГО УРОКА */
         <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-bold text-slate-800 dark:text-white text-base">Редактирование урока {activeLessonIndex + 1}</h4>
+            <h4 className="font-bold text-slate-800 dark:text-white text-base">{t('admin.crf.editLesson').replace('{n}', activeLessonIndex + 1)}</h4>
             <button
               type="button"
               onClick={() => {
@@ -814,11 +816,11 @@ function CourseForm({ initial, onSave, onClose }) {
               }}
               className="text-xs text-slate-500 dark:text-slate-400 hover:text-red-500"
             >
-              Отмена
+              {t('admin.cancel')}
             </button>
           </div>
-          
-          <Field label="Название урока">
+
+          <Field label={t('admin.crf.lessonTitle')}>
             <input
               value={lessonForm.title}
               onChange={(e) => setLessonForm(prev => ({ ...prev, title: e.target.value }))}
@@ -827,7 +829,7 @@ function CourseForm({ initial, onSave, onClose }) {
             />
           </Field>
 
-          <Field label="Контент урока (разделяйте абзацы двойным Enter)">
+          <Field label={t('admin.crf.lessonContent')}>
             <textarea
               value={lessonForm.content}
               onChange={(e) => setLessonForm(prev => ({ ...prev, content: e.target.value }))}
@@ -839,10 +841,10 @@ function CourseForm({ initial, onSave, onClose }) {
 
           {/* Редактор теста из 3 вопросов */}
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-4">
-            <h5 className="font-bold text-slate-700 dark:text-slate-200 text-sm">Мини-тест урока (3 вопроса)</h5>
+            <h5 className="font-bold text-slate-700 dark:text-slate-200 text-sm">{t('admin.crf.miniTest')}</h5>
             {lessonForm.quiz.map((q, qi) => (
               <div key={qi} className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl space-y-2">
-                <Field label={`Вопрос ${qi + 1}`}>
+                <Field label={t('admin.crf.question').replace('{n}', qi + 1)}>
                   <input
                     value={q.question}
                     onChange={(e) => updateQuizField(qi, 'question', e.target.value)}
@@ -855,19 +857,19 @@ function CourseForm({ initial, onSave, onClose }) {
                       key={oi}
                       value={opt}
                       onChange={(e) => updateQuizOption(qi, oi, e.target.value)}
-                      placeholder={`Вариант ${oi + 1}`}
+                      placeholder={t('admin.crf.option').replace('{n}', oi + 1)}
                       className="input bg-white dark:bg-slate-900 text-xs py-1.5"
                     />
                   ))}
                 </div>
-                <Field label="Правильный ответ">
+                <Field label={t('admin.crf.correctAnswer')}>
                   <select
                     value={q.correct}
                     onChange={(e) => updateQuizField(qi, 'correct', Number(e.target.value))}
                     className="input bg-white dark:bg-slate-900 text-xs py-1.5"
                   >
                     {q.options.map((_, oi) => (
-                      <option key={oi} value={oi}>Вариант {oi + 1} ({q.options[oi]})</option>
+                      <option key={oi} value={oi}>{t('admin.crf.optionLabel').replace('{n}', oi + 1).replace('{text}', q.options[oi])}</option>
                     ))}
                   </select>
                 </Field>
@@ -880,16 +882,16 @@ function CourseForm({ initial, onSave, onClose }) {
             onClick={saveLessonDetails}
             className="w-full py-2.5 bg-accent hover:bg-emerald-600 text-white font-bold text-sm rounded-xl transition-colors mt-4"
           >
-            Применить изменения к уроку
+            {t('admin.crf.applyLesson')}
           </button>
         </div>
       ) : (
         /* ОСНОВНАЯ ФОРМА КУРСА */
         <form onSubmit={submit} className="space-y-4">
-          <Field label="Название курса">
+          <Field label={t('admin.crf.courseTitle')}>
             <input required value={form.title} onChange={(e) => set('title', e.target.value)} className="input" />
           </Field>
-          <Field label="Описание">
+          <Field label={t('admin.crf.description')}>
             <textarea
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
@@ -898,14 +900,14 @@ function CourseForm({ initial, onSave, onClose }) {
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Уровень">
+            <Field label={t('admin.crf.level')}>
               <select value={form.level} onChange={(e) => set('level', e.target.value)} className="input">
-                <option>Начальный</option>
-                <option>Средний</option>
-                <option>Продвинутый</option>
+                <option value="Начальный">{t('admin.crf.levelBeginner')}</option>
+                <option value="Средний">{t('admin.crf.levelIntermediate')}</option>
+                <option value="Продвинутый">{t('admin.crf.levelAdvanced')}</option>
               </select>
             </Field>
-            <Field label="Иконка (Material)">
+            <Field label={t('admin.crf.icon')}>
               <input
                 value={form.icon}
                 onChange={(e) => set('icon', e.target.value)}
@@ -915,7 +917,7 @@ function CourseForm({ initial, onSave, onClose }) {
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Градиент (Tailwind)">
+            <Field label={t('admin.crf.gradient')}>
               <input
                 value={form.gradient}
                 onChange={(e) => set('gradient', e.target.value)}
@@ -923,7 +925,7 @@ function CourseForm({ initial, onSave, onClose }) {
                 className="input"
               />
             </Field>
-            <Field label="Теги (через запятую)">
+            <Field label={t('admin.crf.tags')}>
               <input
                 value={form.tags}
                 onChange={(e) => set('tags', e.target.value)}
@@ -936,30 +938,30 @@ function CourseForm({ initial, onSave, onClose }) {
           {/* Менеджер Уроков */}
           <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold text-slate-800 dark:text-white text-sm">Уроки курса ({lessons.length})</h4>
+              <h4 className="font-bold text-slate-800 dark:text-white text-sm">{t('admin.crf.lessonsManager').replace('{n}', lessons.length)}</h4>
               <button
                 type="button"
                 onClick={addLesson}
                 className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
               >
-                <Icon name="add" className="text-[14px]" /> Добавить урок
+                <Icon name="add" className="text-[14px]" /> {t('admin.crf.addLesson')}
               </button>
             </div>
-            
+
             {lessons.length === 0 ? (
-              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">У этого курса пока нет уроков</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">{t('admin.crf.noLessons')}</p>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {lessons.map((l, idx) => (
                   <div key={l.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">Урок {idx + 1}</span>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0">{t('admin.crf.lessonN').replace('{n}', idx + 1)}</span>
                     <span className="text-xs text-slate-800 dark:text-white font-semibold truncate flex-1 mx-3">{l.title}</span>
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
                         onClick={() => editLesson(idx, l)}
                         className="p-1 rounded-md hover:bg-slate-200 text-primary"
-                        title="Редактировать урок"
+                        title={t('admin.crf.editLessonTip')}
                       >
                         <Icon name="edit" className="text-[16px]" />
                       </button>
@@ -967,7 +969,7 @@ function CourseForm({ initial, onSave, onClose }) {
                         type="button"
                         onClick={() => deleteLesson(idx)}
                         className="p-1 rounded-md hover:bg-slate-200 text-red-500"
-                        title="Удалить урок"
+                        title={t('admin.crf.deleteLessonTip')}
                       >
                         <Icon name="delete" className="text-[16px]" />
                       </button>
@@ -987,24 +989,25 @@ function CourseForm({ initial, onSave, onClose }) {
 
 // ---------- Модалка подробностей ученика ----------
 function StudentDetailModal({ student, onClose, crs }) {
+  const { t } = useLanguage()
   return (
-    <Modal title={`Прогресс: ${student.name}`} onClose={onClose}>
+    <Modal title={t('admin.sd.title').replace('{name}', student.name)} onClose={onClose}>
       <div className="space-y-4">
         <div>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Электронная почта</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t('admin.sd.email')}</p>
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{student.email}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-400 dark:text-slate-500">Выбранные интересы</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{t('admin.sd.interests')}</p>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {student.interests.length > 0 ? student.interests.map(i => (
               <span key={i} className="text-[10px] font-semibold bg-brand-soft text-brand px-2 py-0.5 rounded-full">{i}</span>
-            )) : <span className="text-xs text-slate-400 dark:text-slate-500">Не выбраны</span>}
+            )) : <span className="text-xs text-slate-400 dark:text-slate-500">{t('admin.sd.noInterests')}</span>}
           </div>
         </div>
 
         <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
-          <p className="font-bold text-slate-800 dark:text-white text-sm mb-3">Прохождение курсов</p>
+          <p className="font-bold text-slate-800 dark:text-white text-sm mb-3">{t('admin.sd.courseProgress')}</p>
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {crs.map(c => {
               const prog = student.progress[c.id] || {}
@@ -1027,7 +1030,7 @@ function StudentDetailModal({ student, onClose, crs }) {
               )
             })}
             {Object.keys(student.progress).length === 0 && (
-              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">Ученик еще не начал ни одного курса</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">{t('admin.sd.noCourses')}</p>
             )}
           </div>
         </div>
@@ -1069,6 +1072,7 @@ function Field({ label, children }) {
 }
 
 function FormActions({ onClose }) {
+  const { t } = useLanguage()
   return (
     <div className="flex gap-3 pt-2">
       <button
@@ -1076,13 +1080,13 @@ function FormActions({ onClose }) {
         onClick={onClose}
         className="flex-1 py-3 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
       >
-        Отмена
+        {t('admin.cancel')}
       </button>
       <button
         type="submit"
         className="flex-1 py-3 rounded-xl font-semibold bg-primary text-white hover:bg-primary-dark transition-colors"
       >
-        Сохранить
+        {t('admin.save')}
       </button>
     </div>
   )
