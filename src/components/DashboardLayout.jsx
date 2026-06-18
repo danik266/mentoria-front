@@ -44,7 +44,7 @@ export default function DashboardLayout() {
         <Icon name="school" className="text-brand text-[28px]" filled />
         {!collapsed && (
           <span className="font-extrabold text-lg text-slate-900 dark:text-white whitespace-nowrap overflow-hidden">
-            Makquiz <span className="text-brand">Hub</span>
+            Mentoria <span className="text-brand">Hub</span>
           </span>
         )}
       </Link>

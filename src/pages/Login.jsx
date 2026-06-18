@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import { API_BASE } from '../utils/api';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

@@ -12,7 +12,7 @@ export default function Footer() {
           <p className="text-sm text-slate-500 dark:text-slate-400">{t('footer.tagline')}</p>
           <div className="text-center sm:text-right">
             <p className="text-sm text-slate-400 dark:text-slate-500">
-              © {new Date().getFullYear()} Makquiz Hub. {t('footer.rights')}
+              © {new Date().getFullYear()} Mentoria Hub. {t('footer.rights')}
             </p>
             <a
               href="/admin"

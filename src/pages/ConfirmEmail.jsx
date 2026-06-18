@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { KeyRound, Mail, ArrowLeft } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import { API_BASE } from '../utils/api';
 
 export default function ConfirmEmail() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function ConfirmEmail() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/auth/confirm-email', {
+      const response = await fetch(`${API_BASE}/api/auth/confirm-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code: code.trim() }),
@@ -70,7 +71,7 @@ export default function ConfirmEmail() {
     }
     setResending(true);
     try {
-      const response = await fetch('http://localhost:8000/api/auth/resend-confirmation', {
+      const response = await fetch(`${API_BASE}/api/auth/resend-confirmation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

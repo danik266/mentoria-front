@@ -14,6 +14,7 @@ import {
   saveLessons,
   formatDate,
 } from '../utils/storage'
+import { API_BASE } from '../utils/api'
 
 const PASSWORD = 'admin123'
 
@@ -43,7 +44,7 @@ export default function Admin() {
     }
     setErrorText('')
     try {
-      const res = await fetch('http://localhost:8000/api/auth/login', {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -52,7 +53,7 @@ export default function Admin() {
       if (res.ok) {
         localStorage.setItem('token', data.access_token)
         // Verify admin access by calling analytics
-        const testRes = await fetch('http://localhost:8000/api/admin/analytics', {
+        const testRes = await fetch(`${API_BASE}/api/admin/analytics`, {
           headers: {
             'Authorization': `Bearer ${data.access_token}`
           }
@@ -84,7 +85,7 @@ export default function Admin() {
     setLoadingAnalytics(true)
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:8000/api/admin/analytics', {
+      const res = await fetch(`${API_BASE}/api/admin/analytics`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -112,7 +113,7 @@ export default function Admin() {
     if (!confirm('Удалить эту возможность?')) return
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://localhost:8000/api/admin/opportunities/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/opportunities/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -135,7 +136,7 @@ export default function Admin() {
     
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:8000/api/admin/opportunities', {
+      const res = await fetch(`${API_BASE}/api/admin/opportunities`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +167,7 @@ export default function Admin() {
     if (!confirm('Удалить этот курс?')) return
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://localhost:8000/api/admin/courses/${id}`, {
+      const res = await fetch(`${API_BASE}/api/admin/courses/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -202,7 +203,7 @@ export default function Admin() {
 
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:8000/api/admin/courses', {
+      const res = await fetch(`${API_BASE}/api/admin/courses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +259,7 @@ export default function Admin() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@makquiz.site"
+                  placeholder="admin@mentoria.site"
                   className="input"
                 />
               </div>

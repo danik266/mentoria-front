@@ -3,6 +3,7 @@
 // Всё состояние платформы живёт здесь + синхронизируется с бд.
 // =====================================================================
 import { opportunities as defaultOpportunities, courses as defaultCourses, lessons as defaultLessons } from '../data/mock'
+import { API_BASE } from './api'
 
 const KEYS = {
   profile: 'mh_profile',
@@ -43,7 +44,7 @@ function write(key, value) {
 function asyncSyncBack(profile, progress, saved) {
   const token = localStorage.getItem('token')
   if (!token) return
-  fetch('http://localhost:8000/api/sync', {
+  fetch(`${API_BASE}/api/sync`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

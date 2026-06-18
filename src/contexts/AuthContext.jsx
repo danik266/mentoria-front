@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_BASE } from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
-  const [botUsername, setBotUsername] = useState(localStorage.getItem('mh_telegram_bot_username') || 'makquizhub_bot');
+  const [botUsername, setBotUsername] = useState(localStorage.getItem('mh_telegram_bot_username') || 'mentoriahub_bot');
 
   // Here we would typically fetch the user profile using the token
   // For simplicity, we just use the token to signify "logged in"
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const email = payload.sub;
           
-          const res = await fetch('http://localhost:8000/api/sync', {
+          const res = await fetch(`${API_BASE}/api/sync`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }

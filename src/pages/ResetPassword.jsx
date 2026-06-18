@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Mail, KeyRound, Lock, ArrowLeft } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import Logo from '../components/Logo';
+import { API_BASE } from '../utils/api';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/auth/reset-password', {
+      const response = await fetch(`${API_BASE}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
