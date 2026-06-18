@@ -39,7 +39,28 @@ function ScrollToTop() {
 
 export default function App() {
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, token } = useAuth()
+
+  // Log visitor visit to backend
+  useEffect(() => {
+    const logVisit = async () => {
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        // Use relative path or look up VITE_API_URL / fallback to standard port
+        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        await fetch(`${apiBase}/api/log-visit`, {
+          method: 'POST',
+          headers
+        });
+      } catch (err) {
+        console.error('Failed to log visit:', err);
+      }
+    };
+    logVisit();
+  }, [token])
 
   // Determine which layout to show
   const isAppRoute = location.pathname.startsWith('/app')

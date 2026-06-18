@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
-  const [botUsername, setBotUsername] = useState(localStorage.getItem('mh_telegram_bot_username') || 'mentoriahub_bot');
+  const [botUsername, setBotUsername] = useState(localStorage.getItem('mh_telegram_bot_username') || 'mentoriahubkz_bot');
 
   // Here we would typically fetch the user profile using the token
   // For simplicity, we just use the token to signify "logged in"
